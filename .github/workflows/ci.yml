@@ -11,17 +11,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'   # 3.10 has the broadest prebuilt wheels
       - name: Install deps
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
       - name: Bench (CI config)
-        run: make bench CONFIG=config/params_ci.yaml
+        run: python -u bench/calibration.py --config config/params_ci.yaml
       - name: Phase scan (CI config)
-        run: make phase CONFIG=config/params_ci.yaml
+        run: python -u src/experiments/phase_scan.py --config config/params_ci.yaml
       - name: Figures
-        run: make figs
+        run: |
+          python -u figs/make_phase_diagram.py || true
+          python -u figs/make_dimension_plateaus.py || true
+          python -u figs/make_operator_accuracy.py || true
+          python -u figs/make_interval_distance.py || true
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
