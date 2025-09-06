@@ -1,4 +1,6 @@
 [![CI (smoke)](https://github.com/Madmanmuzza/FUT_toe-paper/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)
+**Latest release:** see the Releases page (v0.1.0).  
+**Paper PDF:** see paper/Paper_I_full_with_figures_v3.pdf.
 
 # FUT — Paper I (Negentropic Birth–Death on Causal Sets)
 
