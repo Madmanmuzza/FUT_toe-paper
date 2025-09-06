@@ -1,0 +1,42 @@
+{
+  "results": {
+    "bench_rc": 0,
+    "bench_log": "Saved: bench/out/r_to_d.npz\n",
+    "phase_rc": 1,
+    "phase_log": "Traceback (most recent call last):\n  File \"/mnt/data/fut_toe_paperI_repo/src/experiments/phase_scan.py\", line 5, in <module>\n    from utils.causet import Causet\nModuleNotFoundError: No module named 'utils'\n",
+    "fig_logs": [
+      {
+        "script": "figs/make_phase_diagram.py",
+        "rc": 1,
+        "log": "Traceback (most recent call last):\n  File \"/mnt/data/fut_toe_paperI_repo/figs/make_phase_diagram.py\", line 31, in <module>\n    main()\n  File \"/mnt/data/fut_toe_paperI_repo/figs/make_phase_diagram.py\", line 9, in main\n    with open(INP, \"r\") as f:\n         ^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'figs/out/phase_scan.json'\n"
+      },
+      {
+        "script": "figs/make_dimension_plateaus.py",
+        "rc": 1,
+        "log": "Traceback (most recent call last):\n  File \"/mnt/data/fut_toe_paperI_repo/figs/make_dimension_plateaus.py\", line 29, in <module>\n    main()\n  File \"/mnt/data/fut_toe_paperI_repo/figs/make_dimension_plateaus.py\", line 9, in main\n    with open(INP, \"r\") as f:\n         ^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'figs/out/phase_scan.json'\n"
+      },
+      {
+        "script": "figs/make_operator_accuracy.py",
+        "rc": 0,
+        "log": "Saved: figs/out/operator_accuracy.png\n"
+      },
+      {
+        "script": "figs/make_interval_distance.py",
+        "rc": 0,
+        "log": "Saved: figs/out/interval_distance.png\n"
+      }
+    ],
+    "latex_ok": false,
+    "latex_log": "bash: line 1: pdflatex: command not found\n"
+  },
+  "outputs": {
+    "bench_npz": true,
+    "phase_json": false,
+    "figs": {
+      "phase_diagram.png": false,
+      "dimension_plateaus.png": false,
+      "operator_accuracy.png": true,
+      "interval_distance.png": true
+    }
+  }
+}

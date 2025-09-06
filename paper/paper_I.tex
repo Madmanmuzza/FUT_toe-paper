@@ -1,0 +1,193 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\geometry{a4paper, margin=1in}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}[theorem]{Remark}
+
+% Shortcuts
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Ps}{\psi}
+\newcommand{\Fop}{\mathcal{F}}
+\newcommand{\Boxd}{\mathcal{B}} % discrete d'Alembertian
+\newcommand{\Ixy}{I(x,y)}
+
+\begin{document}
+
+\title{Negentropic Birth--Death Growth on Causal Sets: Model, Well--Posedness, and Geometric Diagnostics}
+\author{Daniel J. Murray}
+\date{September 7, 2025}
+\maketitle
+
+\begin{abstract}
+We define a continuous--time birth--death dynamics on causal sets in which event addition/removal rates are driven by a \emph{negentropic fold operator} \(\Fop[\Ps](x)=\alpha\,\Ps(x)^2-\gamma\,\ln\bigl(1+\Ps(x)^2\bigr)\). The process preserves acyclicity and local finiteness by construction and is label--indifferent. We specify the Markov kernel precisely, introduce scale--diagnostics (Myrheim--Meyer and spectral dimensions), and implement a discrete wave operator \(\Boxd\) to test approach to continuum behavior on smooth probes. We prove well--posedness (existence/uniqueness and non--explosion) under normalized and saturated rates, and lay out measurable signatures of approximately four--dimensional behavior. Phenomenological claims (Standard--Model spectra, black--hole thermodynamics, cosmology) are deferred to future work pending calibration and proofs.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+A causal set is a locally finite partially ordered set intended as a kinematic model of spacetime at Planckian scales. We propose a dynamical law in which a scalar ``negentropic'' field \(\Ps: \C\to\R\) influences birth and death events through a fold functional \(\Fop\), encoding a competition between ordering and dispersion. Our contributions are:
+\begin{itemize}[leftmargin=1.2em]
+  \item a \emph{precise} continuous--time pure--jump Markov process on causal sets (Section~\ref{sec:dynamics}) that preserves acyclicity and local finiteness;
+  \item scale diagnostics: ordering fraction \(r\) and Myrheim--Meyer dimension \(d_{\mathrm{MM}}\), spectral dimension \(d_s\) from diffusion returns, interval counts \(n_k\), and a discrete wave operator \(\Boxd\) for probe tests (Section~\ref{sec:axioms});
+  \item a well--posedness theorem ensuring (i) invariance of partial order and local finiteness, (ii) existence/uniqueness, and (iii) non--explosion under normalized/saturated rates (Section~\ref{sec:wellposed});
+  \item a clean separation between proved results and hypotheses, forming the basis for subsequent papers on continuum limits and fields on emergent geometry.
+\end{itemize}
+
+\paragraph{Notation.} If \((\C,\prec)\) is a causal set, write \(\mathrm{Past}(x) := \{y\in\C: y\prec x\}\), \(\mathrm{Fut}(x):=\{y\in\C: x\prec y\}\). For \(x\prec y\), the Alexandrov interval is \(\Ixy:=\{z: x\prec z\prec y\}\). Maximal and minimal elements are denoted \(\mathrm{Max}(\C)\), \(\mathrm{Min}(\C)\). The Hasse diagram edges are the covers of the partial order.
+
+\section{Axioms and Observables}
+\label{sec:axioms}
+We work throughout on \emph{finite} causal sets; infinite--volume limits are taken as sequences of expanding finite sets.
+
+\begin{assumption}[Causal Set]\label{ass:cst}
+A state is a pair \((\C,\Ps)\) where \((\C,\prec)\) is a locally finite poset (every interval \(\Ixy\) is finite) and \(\Ps: \C\to\R\) is a real field.
+\end{assumption}
+
+\begin{assumption}[Negentropic Fold Operator]\label{ass:fold}
+Given parameters \(\alpha,\gamma>0\), define
+\begin{equation}\label{eq:fold}
+\Fop[\Ps](x)
+= \alpha\,\Ps(x)^2 - \gamma\,\ln\bigl(1+\Ps(x)^2\bigr).
+\end{equation}
+We use a \emph{local} functional \(\Fop_{\mathrm{loc}}[\Ps](x)\) computed on a finite neighborhood of bounded ``height'' \(h\), e.g.
+\begin{equation}\label{eq:localF}
+\Fop_{\mathrm{loc}}[\Ps](x)
+= \alpha\,\overline{\Ps^2}\big|_{\mathcal{N}_h(x)}
+- \gamma\,\overline{\ln(1+\Ps^2)}\big|_{\mathcal{N}_h(x)},
+\end{equation}
+where \(\mathcal{N}_h(x)\) is the induced subposet on elements within graph distance \(\le h\) in the Hasse diagram, and the bar denotes the arithmetic mean.
+\end{assumption}
+
+\begin{assumption}[Noise]\label{ass:noise}
+Let \((\eta_x)_{x\in\C}\) be i.i.d. mean--zero real random variables with variance \(\sigma_\eta^2<\infty\) and compact tails. Noise enters only through local \(\Fop_{\mathrm{loc}}\).
+\end{assumption}
+
+\begin{assumption}[Label Indifference]\label{ass:cov}
+Transition rates depend only on isomorphism--invariant data of finite neighborhoods (e.g. counts of intervals up to height \(h\), statistics of \(\Ps\) on those intervals). Thus the law of the process is invariant under relabelings of \(\C\).
+\end{assumption}
+
+\subsection{Geometric Observables}
+\paragraph{Ordering fraction and Myrheim--Meyer dimension.} Let \(N=|\C|\), \(R\) be the number of comparable unordered pairs. The ordering fraction is \(r:=2R/(N(N-1))\). The Myrheim--Meyer dimension \(d_{\mathrm{MM}}\) is defined by numerically inverting the known map \(d\mapsto r_d\) for Minkowski sprinklings; we denote this numerical inverse by \(d_{\mathrm{MM}}=\mathcal{M}^{-1}(r)\). We report interpolation uncertainty.
+
+\paragraph{Spectral dimension.} Let \(G\) be the undirected skeleton of the Hasse diagram. Start simple random walks at uniformly chosen vertices and estimate the return probability \(P(\tau)\) after \(\tau\) steps. Fit \(\log P(\tau)\approx -\tfrac{d_s}{2}\log\tau + c\) on a predeclared scaling window to obtain \(d_s\) with confidence intervals.
+
+\paragraph{Interval abundances.} For \(k\in\N\), let \(n_k\) be the number of \(k\)--element intervals in \(\C\). Compare the empirical vector \((n_k)\) with flat--space benchmarks via a suitable distance (e.g. chi--square).
+
+\paragraph{Discrete wave operator.} We implement a linear operator \(\Boxd\) on functions \(f: \C\to\R\) with a finite kernel supported on bounded--height neighborhoods, consistent with the standard causal--set d'Alembertian in flat space. Convergence diagnostics: for smooth probes \(f\), study \(\|\Boxd f - \Box f\|_{L^2}\) versus coarse length.
+
+\section{Dynamics: A Continuous--Time Birth--Death Process}
+\label{sec:dynamics}
+We define a pure--jump Markov process \(\{(\C_t,\Ps_t)\}_{t\ge0}\) with two event types: \emph{births} and \emph{deaths}. All events preserve the partial order and local finiteness.
+
+\subsection{Births}
+Given a current state \((\C,\Ps)\), define the birth intensity at an admissible site \(u\in\partial\C\) by
+\begin{equation}\label{eq:birthrate}
+\lambda_b(u)
+= \frac{\kappa_b}{1+|\partial\C|}\;\phi_{L_b}\!\Big(\Fop_{\mathrm{loc}}[\Ps](u) + \eta_u\Big),
+\end{equation}
+where \([x]_+ := \max(x,0)\) and \(\phi_{L}(x):=\min\{[x]_+,\,L\}\) is a saturating positive-part with level \(L_b>0\).
+A birth at \(u\) proceeds as follows:
+\begin{enumerate}[label=\textbf{B\arabic*}., leftmargin=1.4em]
+  \item Sample a finite ancestor set \(A\subseteq \C\) via a label--indifferent kernel \(K_h\) on the height--\(h\) neighborhood of \(u\), enforcing down--set closure (if \(x\in A\) and \(y\prec x\), then \(y\in A\)).
+  \item Add a new element \(z\) with \(x\prec z\) for all \(x\in A\); set \(\Ps(z)\) by a local rule (e.g. Gaussian around the neighborhood mean).
+\end{enumerate}
+
+\subsection{Deaths}
+Let \(v\in\C\) be minimal or maximal. Define
+\begin{equation}\label{eq:deathrate}
+\lambda_d(v)
+= \frac{\kappa_d}{1+|\mathrm{Ext}(\C)|}\;\phi_{L_d}\!\Big(-\,\Fop_{\mathrm{loc}}[\Ps](v) + \eta_v\Big).
+\end{equation}
+A death removes \(v\) and incident Hasse edges, leaving the induced order.
+
+\subsection{Total rate and selection}
+\(\Lambda(\C,\Ps) := \sum_{u\in\partial\C}\lambda_b(u) + \sum_{v\in\mathrm{Ext}(\C)}\lambda_d(v)\).
+Next event time is exponential with mean \(1/\Lambda\); select event/site proportionally to intensity.
+
+\begin{remark}[Boundary choice]\label{rem:boundary}
+Births may be restricted to maximal elements (future growth) or include minimal anchors; the kernel \(K_h\) remains label--indifferent and local.
+\end{remark}
+
+\section{Well--posedness}\label{sec:wellposed}
+\begin{lemma}[Acyclicity preserved]\label{lem:acyclic}
+Births add above a down--set; deaths remove extremals; the poset property is preserved.
+\end{lemma}
+\begin{lemma}[Local finiteness preserved]\label{lem:locfin}
+Finite ancestors and single--element removals keep all \(\Ixy\) finite.
+\end{lemma}
+\begin{lemma}[Uniform total rate bound]\label{lem:uniformbound}
+With \eqref{eq:birthrate}--\eqref{eq:deathrate}, \(\Lambda(\C,\Ps) \le \kappa_b L_b + \kappa_d L_d\) for every finite state.
+\end{lemma}
+\begin{theorem}[Well--posedness]\label{thm:wellposed}
+Under \eqref{eq:birthrate}--\eqref{eq:deathrate}, the pure--jump process on finite labeled causal sets with fields is a conservative CTMC with càdlàg paths and is non--explosive: only finitely many events occur in any finite time interval almost surely.
+\end{theorem}
+\begin{proof}[Proof sketch]
+Lemma~\ref{lem:uniformbound} gives a uniform exit-rate bound, implying a conservative $Q$-matrix and standard CTMC construction; non--explosion follows since waiting times with parameter $\le \kappa_b L_b+\kappa_d L_d$ sum to infinity a.s.
+\end{proof}
+\begin{lemma}[Label indifference]\label{lem:label}
+Isomorphic labeled states have identical event laws.
+\end{lemma}
+
+\section{Algorithms and Implementation Specifications}
+\label{sec:algorithms}
+\paragraph{Myrheim--Meyer (\(d_{\mathrm{MM}}\)).} Compute \(r\), invert numerically using a monotone calibration table \(\{(r_d,d)\}\) from high--density Minkowski sprinklings (extrapolated in \(1/N\)). Report interpolation uncertainty.
+\paragraph{Spectral dimension (\(d_s\)).} On the undirected Hasse skeleton, run a \emph{lazy} random walk; estimate \(P(\tau)\); select a window by AIC and fit \(\log P(\tau)\approx -(d_s/2)\log\tau+c\). Bootstrap CIs.
+\paragraph{Interval abundances.} For \(k\le k_{\max}\), count \(n_k\). Compare to flat--space benchmarks via normalized \(\chi^2\).
+\paragraph{Discrete d'Alembertian (BDG).} With layers \(L_i(x)=\{y\prec x: |I(y,x)|=i-1\}\) and scale \(\ell\),
+\[
+\Boxd^{(d)} f(x)=\frac{1}{\ell^2}\Big(\alpha_d f(x)+\beta_d\sum_{i=1}^{\lfloor d/2\rfloor+2} C_i^{(d)}\sum_{y\in L_i(x)} f(y)\Big),
+\]
+with closed--form \(\alpha_d,\beta_d,C_i^{(d)}\). Validate by \(\|\Boxd f-\Box f\|\) vs coarse length; mean tends to \(\Box-\tfrac12 R\) in weak curvature.
+
+\section{Figures}
+(i) Phase diagram in \((\alpha,\gamma)\) (fixed \(\sigma_\eta\)); (ii) Dual plateaus: \(d_s\) vs scale and \(d_{\mathrm{MM}}\) vs size; (iii) Operator accuracy: \(\|\Boxd f-\Box f\|_{L^2}\) vs coarse length; (iv) Interval--distance curves \(\chi^2(d)\); (v) Ablations.
+
+\appendix
+\section*{Appendix A: Closed-Form Coefficients for $\Boxd^{(d)}$}
+Let $n_d=\lfloor d/2\rfloor+2$ and $L_i(x)=\{\,y\prec x:\ |I(y,x)|=i-1\,\}$. The Benincasa--Dowker--Glaser operator is
+\[
+\Boxd^{(d)} f(x) \;=\; \frac{1}{\ell^2}\Big( \alpha_d f(x) + \beta_d \sum_{i=1}^{n_d} C^{(d)}_i \sum_{y\in L_i(x)} f(y) \Big).
+\]
+Define $S_n=2\pi^{(n+1)/2}/\Gamma((n+1)/2)$ and $c_d = S_{d-2}/\!\bigl(d(d-1)\,2^{\frac d2-1}\bigr)$. The prefactors are
+\[
+\alpha_d = -\,c_d^{\,2/d}\,\Gamma\!\Big(1+\tfrac{2}{d}\Big)^{-1}\!\times
+\begin{cases}
+2, & d\text{ even},\\[2pt]
+1, & d\text{ odd},
+\end{cases}
+\qquad
+\beta_d = \frac{c_d^{\,2/d}}{\Gamma(\tfrac{2}{d})\,\Gamma(d)}\times
+\begin{cases}
+2\,\Gamma(\tfrac d2+2)\,\Gamma(\tfrac d2+1), & d\text{ even},\\[2pt]
+\Gamma(\tfrac{d+3}{2})\,\Gamma(\tfrac{d+1}{2}), & d\text{ odd}.
+\end{cases}
+\]
+For $i=1,\dots,n_d$ the layer coefficients are finite sums
+\[
+C^{(d\,\mathrm{even})}_i = \sum_{k=0}^{i-1} \binom{i-1}{k} (-1)^k \,
+\frac{\Gamma\!\bigl( \tfrac d2(k+1)+2\bigr)}{\Gamma(\tfrac d2+2)\,\Gamma(1+\tfrac d2 k)},
+\qquad
+C^{(d\,\mathrm{odd})}_i = \sum_{k=0}^{i-1} \binom{i-1}{k} (-1)^k \,
+\frac{\Gamma\!\bigl( \tfrac d2(k+1)+\tfrac{3}{2}\bigr)}{\Gamma(\tfrac{d+3}{2})\,\Gamma(1+\tfrac d2 k)}.
+\]
+These closed forms reproduce the known continuum limits: on 4D curved backgrounds,
+$\big\langle \Boxd^{(4)} f\big\rangle \to \Box f - \tfrac12 R\,f$ as $\ell\to 0$.
+
+\bibliographystyle{unsrt}
+\bibliography{cst_core}
+
+\end{document}

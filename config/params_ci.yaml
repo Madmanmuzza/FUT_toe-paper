@@ -1,0 +1,20 @@
+grid:
+  alpha:
+  - 0.5
+  - 1.5
+  gamma:
+  - 0.5
+  n_seeds: 1
+  sigma_eta: 0.2
+  target_N: 80
+sprinkling:
+  Ns:
+  - 60
+  - 80
+  T: 1.0
+  dims:
+  - 2
+  - 3
+  - 4
+  seeds:
+  - 0
