@@ -1,4 +1,4 @@
-[![CI (smoke)](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)
+[![CI (smoke)](https://github.com/Madmanmuzza/FUT_toe-paper/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)
 
 # FUT — Paper I (Negentropic Birth–Death on Causal Sets)
 
