@@ -12,6 +12,9 @@ This repo contains:
 - `config/` — parameter grids and seeds
 - `Makefile` — `make all` builds figures and compiles the paper
 **Paper II (camera-ready PDF):** [paper2/Paper_II_camera_ready.pdf](paper2/Paper_II_camera_ready.pdf)
+**Paper III (WIP, TeX):** [paper3/paper_III.tex](paper3/paper_III.tex)  
+**Paper III (WIP, PDF):** [paper3/Paper_III_WIP.pdf](paper3/Paper_III_WIP.pdf)  
+**Latest release:** https://github.com/Madmanmuzza/FUT_toe-paper/releases/latest
 
 ## Quick start
 ```bash
