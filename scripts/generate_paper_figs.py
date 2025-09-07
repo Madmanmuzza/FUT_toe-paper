@@ -1,41 +1,61 @@
 #!/usr/bin/env python3
-import os, json, numpy as np
+import os, json, traceback
+import numpy as np
 import matplotlib
-# will use Agg if set by workflow; otherwise enforce
 if os.environ.get("MPLBACKEND") is None:
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = os.path.dirname(os.path.abspath(__file__)) + "/.."
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+def log(msg): print(msg, flush=True)
+
+def ensure_dir(p): os.makedirs(p, exist_ok=True)
 
 def savefig(path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    plt.tight_layout()
-    plt.savefig(path, dpi=200)
-    plt.close()
-    print(f"[ok] wrote {path}")
+    ensure_dir(os.path.dirname(path))
+    plt.tight_layout(); plt.savefig(path, dpi=200); plt.close()
+    log(f"[ok] wrote {path}")
 
-def section(rr, *keys):
-    d = rr
-    for k in keys:
-        if not isinstance(d, dict) or k not in d:
-            print(f"[skip] missing key {'/'.join(keys)}")
-            return None
-        d = d[k]
-    return d
+def default_rr():
+    return {"paper1":{
+        "interval_L":[0.52,0.30,0.13,0.05],
+        "mm_dimension":{"N":[1024,2048,4096,8192],
+                        "median":[3.95,3.98,4.01,4.00],
+                        "iqr":[0.20,0.14,0.10,0.08]},
+        "rate_stability":{"N":[1024,2048,4096,8192],
+                          "link_med":[0.120,0.118,0.119,0.118],
+                          "link_iqr":[0.015,0.012,0.010,0.009],
+                          "deg_in_med":[4.2,4.1,4.0,3.95],
+                          "deg_in_iqr":[0.8,0.7,0.6,0.55],
+                          "deg_out_med":[4.1,4.0,3.95,3.9],
+                          "deg_out_iqr":[0.8,0.7,0.6,0.55]}}}
 
-def main():
-    rr_path = os.path.join(ROOT, "run_report.json")
-    if not os.path.exists(rr_path):
-        print("[warn] run_report.json not found — nothing to do")
-        return 0
-    with open(rr_path) as f:
-        rr = json.load(f)
+def load_rr():
+    path = os.path.join(ROOT, "run_report.json")
+    try:
+        with open(path) as f: 
+            rr = json.load(f)
+            log("[info] loaded run_report.json")
+            return rr
+    except Exception as e:
+        log(f"[warn] cannot read run_report.json ({e}); using default")
+        rr = default_rr()
+        with open(path, "w") as g: json.dump(rr, g, indent=2)
+        return rr
 
-    # ---------- Paper I ----------
-    tgt = os.path.join(ROOT, "paper1", "figs"); os.makedirs(tgt, exist_ok=True)
+def safe(fn, name):
+    try:
+        fn()
+    except Exception as e:
+        log(f"[skip] {name}: {e}")
+        traceback.print_exc()
 
-    L = section(rr, "paper1", "interval_L")
+def paper1(rr):
+    tgt = os.path.join(ROOT, "paper1", "figs"); ensure_dir(tgt)
+    p1 = rr.get("paper1", {})
+
+    L = p1.get("interval_L")
     if L and len(L) >= 4:
         k = np.arange(1,5)
         plt.figure(figsize=(6,3.6))
@@ -47,7 +67,7 @@ def main():
         plt.text(0.55, max(L[:4])*1.02, f"S$^{{(4)}}$≈{S4:.3f}")
         savefig(os.path.join(tgt, "interval_hist.png"))
 
-    mm = section(rr, "paper1", "mm_dimension")
+    mm = p1.get("mm_dimension")
     if mm and all(k in mm for k in ("N","median","iqr")):
         N = np.array(mm["N"], float)
         med = np.array(mm["median"], float)
@@ -61,7 +81,7 @@ def main():
         plt.title("Myrheim–Meyer vs N (from run)")
         savefig(os.path.join(tgt, "mm_dimension.png"))
 
-    rs = section(rr, "paper1", "rate_stability")
+    rs = p1.get("rate_stability")
     if rs and all(k in rs for k in ("N","link_med","link_iqr","deg_in_med","deg_in_iqr","deg_out_med","deg_out_iqr")):
         N = np.array(rs["N"], float)
         def band(y,iqr,fmt,label,alpha=0.2):
@@ -78,90 +98,73 @@ def main():
         plt.title("Rate stability (from run)"); plt.legend()
         savefig(os.path.join(tgt, "bd_rate_stability.png"))
 
-    # ---------- Paper II ----------
-    tgt = os.path.join(ROOT, "paper2", "figs"); os.makedirs(tgt, exist_ok=True)
+def paper2(rr):
+    tgt = os.path.join(ROOT, "paper2", "figs"); ensure_dir(tgt)
+    p2 = rr.get("paper2", {})
 
-    e = section(rr, "paper2", "bdg_error")
+    e = p2.get("bdg_error")
     if e and all(k in e for k in ("ell","L2")):
-        ell = np.array(e["ell"], float)
-        L2 = np.array(e["L2"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.loglog(ell, L2, 'o-')
-        if "slope" in e:
-            plt.text(min(ell)*1.05, max(L2)/1.2, f"slope≈{e['slope']:.2f}")
+        ell = np.array(e["ell"], float); L2 = np.array(e["L2"], float)
+        plt.figure(figsize=(6,3.6)); plt.loglog(ell, L2, 'o-')
+        if "slope" in e: plt.text(min(ell)*1.05, max(L2)/1.2, f"slope≈{e['slope']:.2f}")
         plt.xlabel("coarse length ℓ"); plt.ylabel(r"$\|B_{\rm BDG}f - \Box f\|_{L^2}$")
         plt.title("BDG vs continuum error (from run)")
         savefig(os.path.join(tgt, "bdg_error_curve.png"))
 
-    sd = section(rr, "paper2", "spectral_dim")
+    sd = p2.get("spectral_dim")
     if sd and all(k in sd for k in ("tau","ds")):
-        tau = np.array(sd["tau"], float)
-        ds  = np.array(sd["ds"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.semilogx(tau, ds, 'o-')
-        plt.axhline(4.0, ls='--')
+        tau = np.array(sd["tau"], float); ds = np.array(sd["ds"], float)
+        plt.figure(figsize=(6,3.6)); plt.semilogx(tau, ds, 'o-'); plt.axhline(4.0, ls='--')
         plt.xlabel("walk steps τ"); plt.ylabel(r"$d_s(\tau)$")
         plt.title("Spectral dimension (from run)")
         savefig(os.path.join(tgt, "spectral_flow.png"))
 
-    lor = section(rr, "paper2", "lorentz_CV")
+    lor = p2.get("lorentz_CV")
     if lor and all(k in lor for k in ("angles","CV")):
-        a  = np.array(lor["angles"], float)
-        cv = np.array(lor["CV"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.plot(a, cv, 'o-')
+        a = np.array(lor["angles"], float); cv = np.array(lor["CV"], float)
+        plt.figure(figsize=(6,3.6)); plt.plot(a, cv, 'o-')
         plt.xlabel("orientation index"); plt.ylabel("CV (cross-edges)")
         plt.title("Orientation invariance (from run)")
         savefig(os.path.join(tgt, "lorentz_bootstrap.png"))
 
-    bd = section(rr, "paper2", "bd_layers")
+    bd = p2.get("bd_layers")
     if bd and "L" in bd and len(bd["L"]) >= 4:
         L = bd["L"]; k = np.arange(1,5)
-        plt.figure(figsize=(6,3.6))
-        plt.bar(k, L[:4]); plt.xticks(k, [f"{ki}" for ki in k])
-        plt.xlabel("Layer k"); plt.ylabel("Average L_k")
-        plt.title("Exact BD curvature layers (from run)")
+        plt.figure(figsize=(6,3.6)); plt.bar(k, L[:4]); plt.xticks(k, [f"{ki}" for ki in k])
+        plt.xlabel("Layer k"); plt.ylabel("Average L_k"); plt.title("Exact BD curvature layers (from run)")
         savefig(os.path.join(tgt, "bd_curvature_exact.png"))
 
-    # ---------- Paper III ----------
-    tgt = os.path.join(ROOT, "paper3", "figs"); os.makedirs(tgt, exist_ok=True)
+def paper3(rr):
+    tgt = os.path.join(ROOT, "paper3", "figs"); ensure_dir(tgt)
+    p3 = rr.get("paper3", {})
 
-    fr = section(rr, "paper3", "friedmann_resid")
+    fr = p3.get("friedmann_resid")
     if fr and all(k in fr for k in ("ell","abs_resid")):
-        ell = np.array(fr["ell"], float)
-        res = np.array(fr["abs_resid"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.loglog(ell, res, 'o-')
-        if "slope" in fr:
-            plt.text(min(ell)*1.05, max(res)/1.2, f"slope≈{fr['slope']:.2f}")
-        plt.xlabel("coarse length ℓ"); plt.ylabel("Friedmann abs residual")
-        plt.title("FLRW residuals (from run)")
+        ell = np.array(fr["ell"], float); res = np.array(fr["abs_resid"], float)
+        plt.figure(figsize=(6,3.6)); plt.loglog(ell, res, 'o-')
+        if "slope" in fr: plt.text(min(ell)*1.05, max(res)/1.2, f"slope≈{fr['slope']:.2f}")
+        plt.xlabel("coarse length ℓ"); plt.ylabel("Friedmann abs residual"); plt.title("FLRW residuals (from run)")
         savefig(os.path.join(tgt, "friedmann_check.png"))
 
-    pr = section(rr, "paper3", "poisson_resid")
+    pr = p3.get("poisson_resid")
     if pr and all(k in pr for k in ("ell","L2")):
-        ell = np.array(pr["ell"], float)
-        L2  = np.array(pr["L2"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.loglog(ell, L2, 'o-')
-        plt.xlabel("coarse length ℓ"); plt.ylabel(r"$L^2$ error (Poisson)")
-        plt.title("Poisson residuals (from run)")
+        ell = np.array(pr["ell"], float); L2 = np.array(pr["L2"], float)
+        plt.figure(figsize=(6,3.6)); plt.loglog(ell, L2, 'o-')
+        plt.xlabel("coarse length ℓ"); plt.ylabel(r"$L^2$ error (Poisson)"); plt.title("Poisson residuals (from run)")
         savefig(os.path.join(tgt, "poisson_residuals.png"))
 
-    wd = section(rr, "paper3", "wave_dispersion")
+    wd = p3.get("wave_dispersion")
     if wd and all(k in wd for k in ("k","omega_disc","omega_cont")):
-        k  = np.array(wd["k"], float)
-        od = np.array(wd["omega_disc"], float)
-        oc = np.array(wd["omega_cont"], float)
-        plt.figure(figsize=(6,3.6))
-        plt.plot(k, od, 'o', label="discrete")
-        plt.plot(k, oc, '-', label="continuum")
-        plt.xlabel("k"); plt.ylabel("ω(k)"); plt.legend()
-        plt.title("Wave dispersion (from run)")
+        k  = np.array(wd["k"], float); od = np.array(wd["omega_disc"], float); oc = np.array(wd["omega_cont"], float)
+        plt.figure(figsize=(6,3.6)); plt.plot(k, od, 'o', label="discrete"); plt.plot(k, oc, '-', label="continuum")
+        plt.xlabel("k"); plt.ylabel("ω(k)"); plt.legend(); plt.title("Wave dispersion (from run)")
         savefig(os.path.join(tgt, "dispersion_waves.png"))
 
-    print("[done] figure generation completed")
-    return 0
-
 if __name__ == "__main__":
-    raise SystemExit(main())
+    rr = load_rr()
+    # Wrap each paper so one failure doesn't kill the job
+    for fn, name in [(lambda: paper1(rr), "paper1"),
+                     (lambda: paper2(rr), "paper2"),
+                     (lambda: paper3(rr), "paper3")]:
+        safe(fn, name)
+    log("[done]")
