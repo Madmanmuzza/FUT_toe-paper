@@ -1,0 +1,170 @@
+%===========================%
+%  Paper X (standalone)     %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_X.bib on compile)
+\begin{filecontents*}{paper_X.bib}
+@article{Peng2011,
+  author  = {Peng, Roger D.},
+  title   = {Reproducible Research in Computational Science},
+  journal = {Science},
+  year    = {2011},
+  volume  = {334},
+  number  = {6060},
+  pages   = {1226--1227},
+  doi     = {10.1126/science.1213847}
+}
+@article{WilkinsonFAIR2016,
+  author  = {Wilkinson, Mark D. and Dumontier, Michel and Aalbersberg, IJsbrand Jan and others},
+  title   = {The FAIR Guiding Principles for scientific data management and stewardship},
+  journal = {Scientific Data},
+  year    = {2016},
+  volume  = {3},
+  pages   = {160018},
+  doi     = {10.1038/sdata.2016.18}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+
+% --- hyperlinks
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem/snippets (minimal here)
+\numberwithin{equation}{section}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% --- helpers
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell}  % coarse length
+
+% --- figure paths (both accepted)
+\graphicspath{{figs10/}{paper10/figs/}}
+
+% --- robust include (single check)
+\newcommand{\SafeGraphic}[2]{% #1 file, #2 width frac
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}%
+  }%
+}
+
+\title{Paper X: Synthesis, Program Gates, and Roadmap\\
+for a First-Principles Causal-Set ToE}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We synthesize Papers I–IX into a single, falsifiable program. We list decisive acceptance gates (what must be true to claim success), prioritize predictions by novelty vs measurability, set a concrete release/validation timeline, and fix reproducibility and data policies (FAIR). This is the control document: it states, without hedging, what counts as a pass/fail for the full ToE program.
+\end{abstract}
+
+\paragraph{Run \& release policy (applies to all papers).}
+Seeds $=8$; size ladder $N\in\{2^{10},2^{11},2^{12},2^{13}\}$ unless stated otherwise. Report medians and IQRs across seeds; uncertainties from $10^4$ bootstrap resamples for slopes/exponents. Each paper writes a JSON summary of fit parameters and CIs. Every public release attaches PDF $+$ results JSON $+$ exact config. Reproducibility follows \citep{Peng2011}; artifacts follow FAIR \citep{WilkinsonFAIR2016}.
+
+\section{Program acceptance gates (pass/fail)}
+Let $\ellc\sim(\mathrm{Vol}/N)^{1/4}$. Any failure below rules out the program at the stated scope.
+
+\subsection*{I–III (Foundations $\to$ EH \& controls)}
+\begin{itemize}
+\item \textbf{Well-posed BD dynamics:} normalized/saturated rates produce stable growth; interval statistics match controls (Paper~I).
+\item \textbf{Einstein limit:} BDG vs continuum d’Alembertian error in $L^2$ is $C\,\ellc^{p}$ with $p>0.5$ (95\% CI) on Minkowski; Newtonian/FLRW residuals decay with refinement (Paper~III).
+\end{itemize}
+
+\subsection*{IV (Quantum sector)}
+\begin{itemize}
+\item \textbf{Propagators:} $\|G_F^{\mathrm{disc}}-G_F^{\mathrm{cont}}\|_{L^2}=C\,\ellc^{p}$, $p>0.5$ (95\% CI).
+\item \textbf{Microcausality:} leakage ratio $\mathcal{L}(\ellc)$ decreases with slope $p_{\rm mc}>0.5$ (95\% CI).
+\item \textbf{Unruh:} $|T-a/2\pi|/(a/2\pi)<5\%$ at top size, improving with $N$.
+\end{itemize}
+
+\subsection*{V (RG \& EFT)}
+\begin{itemize}
+\item \textbf{Reblocking stability:} CV of $g_i(\mu)$ under $\mathcal{B}_{n_b}$ $<5\%$ at fixed $\mu$.
+\item \textbf{Spectral positivity:} $\rho(\omega)\ge 0$ with window normalizations within $5\%$.
+\item \textbf{Scaling collapse:} normalized collapse RMSE $<0.1$ with bootstrap CI on $\nu$.
+\end{itemize}
+
+\subsection*{VI (Gauge \& fermions)}
+\begin{itemize}
+\item \textbf{Wilson loops:} expected area/perimeter regime; slope stable ($<10\%$ variation) across top sizes.
+\item \textbf{Dispersion:} vector-like fermions: median relative error $<5\%$ on mid-$k$ window, improving with $N$.
+\item \textbf{Chiral test (milestone):} anomaly ratio $\to 1$ with positive refinement slope (95\% CI excludes $0$).
+\end{itemize}
+
+\subsection*{VII (Cosmology)}
+\begin{itemize}
+\item \textbf{CMB/LSS/BBN/SGWB:} residuals $\lesssim$ percent-level and \emph{shrinking} with $\ellc$; joint $(H_0,\Omega_m)$ posteriors overlap across probes as $\ellc\to0$.
+\end{itemize}
+
+\subsection*{VIII (Black holes)}
+\begin{itemize}
+\item \textbf{$T=\kappa/2\pi$:} slope error $<5\%$, improving with $N$.
+\item \textbf{$S=A/4$:} linear slope $1/4\pm5\%$, residuals shrink with $N$.
+\item \textbf{QNMs:} spacing/damping trends within $10\%$, improving with $N$.
+\end{itemize}
+
+\subsection*{IX (Precision bounds)}
+\begin{itemize}
+\item \textbf{LIV/EP:} predicted signals lie below best current bounds with $\gtrsim 2\times$ margin at top size and margin grows as $\ellc\to0$.
+\end{itemize}
+
+\section{Prediction prioritization}
+We rank predictions by novelty (theory leverage) and near-term measurability; only upper-right quadrant enters Phase~1.
+\begin{figure}[H]\centering
+\SafeGraphic{prediction_prioritization.png}{0.85}
+\caption{Prediction prioritization map: the top-right quadrant defines Phase~1 targets.}
+\end{figure}
+
+\section{Timeline and milestones}
+Phase~1: Papers IV–V numerics and one cosmology prediction; Phase~2: gauge/fermion dispersion and black-hole slopes; Phase~3: chiral anomaly and precision-bounds margin.
+\begin{figure}[H]\centering
+\SafeGraphic{milestone_timeline.png}{0.95}
+\caption{Schematic milestone timeline: papers, reviews, DOIs, and data releases.}
+\end{figure}
+
+\section{Sensitivity evolution}
+Projected CI widths vs sample size $N$ follow $\sim N^{-1/2}$ down to a systematic floor; we set quotas accordingly.
+\begin{figure}[H]\centering
+\SafeGraphic{sensitivity_evolution.png}{0.80}
+\caption{Projected 95\% CI width vs $N$; the floor marks systematic limits (to be measured).}
+\end{figure}
+
+\section{Reproducibility, data, and releases}
+All code paths are scripted; environments pinned; results serialized to JSON and packed with figures. Data and code adopt FAIR principles \citep{WilkinsonFAIR2016}. Each release tag includes: PDF, results JSON, config snapshot, and a short CHANGELOG \citep{Peng2011}.
+
+\section{Single-page verdict (for reviewers)}
+Either (i) all gates above pass with the stated margins and shrinking trends (program viable), or (ii) at least one gate fails and does not improve with refinement (program falsified at that scope). No hedging.
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+% Ensure references appear even if not cited explicitly
+\nocite{Peng2011,WilkinsonFAIR2016}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_X}
+
+\end{document}

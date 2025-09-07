@@ -1,0 +1,176 @@
+%===========================%
+%  Paper VI (standalone)    %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_VI.bib on compile)
+\begin{filecontents*}{paper_VI.bib}
+@article{Wilson1974,
+  author  = {Wilson, Kenneth G.},
+  title   = {Confinement of quarks},
+  journal = {Phys. Rev. D},
+  year    = {1974},
+  volume  = {10},
+  pages   = {2445--2459},
+  doi     = {10.1103/PhysRevD.10.2445}
+}
+@article{KogutSusskind1975,
+  author  = {Kogut, John and Susskind, Leonard},
+  title   = {Hamiltonian formulation of Wilson's lattice gauge theories},
+  journal = {Phys. Rev. D},
+  year    = {1975},
+  volume  = {11},
+  pages   = {395--408},
+  doi     = {10.1103/PhysRevD.11.395}
+}
+@article{NielsenNinomiya1981,
+  author  = {Nielsen, Holger Bech and Ninomiya, Masao},
+  title   = {No-go theorem for regularizing chiral fermions},
+  journal = {Phys. Lett. B},
+  year    = {1981},
+  volume  = {105},
+  number  = {2--3},
+  pages   = {219--223},
+  doi     = {10.1016/0370-2693(81)91026-1}
+}
+@article{BenincasaDowker2010,
+  author  = {Benincasa, Dionigi M. T. and Dowker, Fay},
+  title   = {The Scalar Curvature of a Causal Set},
+  journal = {Phys. Rev. Lett.},
+  year    = {2010},
+  volume  = {104},
+  number  = {18},
+  pages   = {181301},
+  doi     = {10.1103/PhysRevLett.104.181301}
+}
+@article{AslanbeigiEtAl2014,
+  author  = {Aslanbeigi, Siavash and Saravani, Mehdi and Sorkin, Rafael D.},
+  title   = {Generalized causal set d'Alembertians},
+  journal = {JHEP},
+  year    = {2014},
+  volume  = {2014},
+  number  = {6},
+  pages   = {24},
+  doi     = {10.1007/JHEP06(2014)024}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}                % [H] hard placement
+\usepackage[section]{placeins}    % Float barriers per section
+\usepackage{bm}
+
+% --- hyperlinks
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem envs
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% --- helpers
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell}
+
+% --- figure paths (both accepted)
+\graphicspath{{figs6/}{paper6/figs/}}
+
+% --- robust include
+\newcommand{\SafeGraphic}[2]{% #1 file, #2 width frac
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}%
+  }%
+}
+
+\title{Paper VI: Gauge and Fermion Sectors\\
+on Negentropic Birth--Death Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We extend the BD causal-set framework to $U(1)$/$SU(N)$ gauge transport on Hasse links and to fermions with a discrete Dirac kernel aligned to the BDG lightcone. We define Wilson-loop and plaquette diagnostics, test dispersion, and perform anomaly-matching checks. Each diagnostic has an explicit acceptance threshold; failure of any threshold falsifies this sector at the stated scope.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; size ladder $N\in\{2^{10},2^{11},2^{12},2^{13}\}$ on flat causal diamonds; medians and IQRs reported. Coarse length $\ellc\sim(\mathrm{Vol}/N)^{1/4}$. Gauge groups tested: $U(1)$ (baseline), $SU(2)$ (optional). Link variables $U(x\!\to\!y)\in G$ assigned on cover relations.
+
+\section{Gauge transport and curvature}
+Assign $U(x\!\to\!y)$ on Hasse links and define the holonomy of a minimal closed loop $C$ in a small causal diamond by ordered multiplication. The Wilson loop is
+\[
+W(C)=\frac{1}{\mathrm{dim}}\mathrm{Re}\,\mathrm{tr}\Big(\prod_{e\in C}U(e)\Big).
+\]
+\noindent\textbf{Acceptance (Wilson scaling):} on smooth controls, $\log\langle W(C)\rangle$ vs area $A$ exhibits the expected regime (area law at strong coupling; perimeter-like at weak) with slope stable under refinement (slope change $<10\%$ across the top two sizes).
+
+\begin{figure}[H]\centering
+\SafeGraphic{wilson_loop_scaling.png}{0.80}
+\caption{Wilson loop scaling. \textbf{Falsifier:} slope flips regime under refinement or varies $>10\%$ across the top sizes.}
+\end{figure}
+
+\subsection*{Plaquette spectrum}
+For “plaquettes” (minimal causal-diamond loops), let $\theta$ be the gauge-invariant angle (Abelian) or an $SU(N)$ class angle. \textbf{Acceptance (smoothing):} the distribution narrows with refinement on smooth controls; interquartile width decreases monotonically with $N$.
+
+\begin{figure}[H]\centering
+\SafeGraphic{plaquette_hist.png}{0.80}
+\caption{Plaquette angle distribution. \textbf{Falsifier:} no narrowing trend (IQR non-decreasing) under refinement.}
+\end{figure}
+
+\section{Fermions and the Dirac kernel}
+Define a discrete Dirac operator $D$ acting on spinors $\psi:\mathcal{C}\to\mathbb{C}^4$ using directed incidence maps aligned to BDG lightcone structure; mass term $m\bar\psi\psi$ and gauge-covariant transport via link $U$ enter in the standard way. Compare discrete energies $E(k)$ with $E_{\mathrm{cont}}(k)=\sqrt{k^2+m^2}$ over mid-momentum windows.
+
+\noindent\textbf{Acceptance (dispersion):} median relative error $<5\%$ on the mid-$k$ window at top size; error decreases with refinement (significant downward slope at 95\% CI).
+
+\begin{figure}[H]\centering
+\SafeGraphic{fermion_dispersion.png}{0.80}
+\caption{Fermion dispersion. \textbf{Falsifier:} $>5\%$ error at top size or non-decreasing error with $N$.}
+\end{figure}
+
+\section{Chiral issues and anomaly matching}
+Nielsen–Ninomiya obstructions \citep{NielsenNinomiya1981} constrain chiral regularizations. We test a parity-preserving doubled construction with counterterms and measure the divergence of the chiral current in background $U(1)$ fields.
+
+\noindent\textbf{Acceptance (anomaly):} anomaly ratio (measured/expected) $\to 1$ with refinement; linear fit vs resolution has positive slope with 95\% CI excluding $0$.
+
+\begin{figure}[H]\centering
+\SafeGraphic{anomaly_match.png}{0.80}
+\caption{Chiral anomaly matching. \textbf{Falsifier:} ratio fails to approach $1$; slope CI includes $0$.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+% --- Appendices
+\appendix
+
+\section{Small-diamond loops and gauge invariance}
+We characterize minimal loops in Hasse diagrams and prove $W(C)$ invariance under local $G$ transformations at vertices.
+
+\section{Dirac construction on a partial order}
+We sketch $D$ from directed incidence, with locality and symmetry constraints adapted from BDG kernels \citep{AslanbeigiEtAl2014}. Coupling to curvature surrogates leverages interval-abundance weights \citep{BenincasaDowker2010}.
+
+% Ensure core references appear
+\nocite{Wilson1974,KogutSusskind1975,NielsenNinomiya1981,BenincasaDowker2010,AslanbeigiEtAl2014}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_VI}
+
+\end{document}

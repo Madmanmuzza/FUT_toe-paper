@@ -1,0 +1,136 @@
+%===========================%
+%  Paper III (standalone)   %
+%===========================%
+
+\begin{filecontents*}{paper_III.bib}
+@book{Wald1984,
+  author  = {Wald, Robert M.},
+  title   = {General Relativity},
+  publisher = {University of Chicago Press},
+  year    = {1984}
+}
+@article{BenincasaDowker2010,
+  author  = {Benincasa, Dionigi M. T. and Dowker, Fay},
+  title   = {The Scalar Curvature of a Causal Set},
+  journal = {Phys. Rev. Lett.},
+  year    = {2010},
+  volume  = {104},
+  number  = {18},
+  pages   = {181301},
+  doi     = {10.1103/PhysRevLett.104.181301}
+}
+@article{AslanbeigiEtAl2014,
+  author  = {Aslanbeigi, Siavash and Saravani, Mehdi and Sorkin, Rafael D.},
+  title   = {Generalized causal set d’Alembertians},
+  journal = {JHEP},
+  year    = {2014},
+  volume  = {2014},
+  number  = {6},
+  pages   = {24},
+  doi     = {10.1007/JHEP06(2014)024}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!50!black}
+
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell}
+
+\graphicspath{{figs3/}{paper3/figs/}}
+\newcommand{\SafeGraphic}[2]{%
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.0in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}}}
+
+\title{Paper III: Effective Action, Einstein Limit, and Continuum Controls\\
+for Negentropic Birth--Death Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We promote the Einstein–Hilbert (EH) matching for the BD framework to a theorem with boundary control, then validate on FLRW, Newtonian, and linear-wave controls. Failure of any acceptance threshold falsifies this scope.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; sizes $N\in\{2^{10},2^{11},2^{12},2^{13}\}$; medians/IQRs reported. $\ellc\sim(\mathrm{Vol}/N)^{1/4}$.
+
+\section{Quadratic form and curvature surrogate}
+Let $B_{\rm BDG}$ be the discrete d’Alembertian \citep{AslanbeigiEtAl2014}. Define
+\[
+S_{\rm BD}[\phi]=\frac{1}{2}\sum_{x,y}\phi(x)\,B_{\rm BDG}(x,y)\,\phi(y)
++\alpha\,S_{\rm bdry}+\beta\,S_{\rm dens},
+\]
+with $S_{\rm bdry}$ a boundary counterterm and $S_{\rm dens}$ an interval-density surrogate.
+Benincasa–Dowker’s 4D layer combination $S^{(4)}$ provides a scalar-curvature proxy \citep{BenincasaDowker2010}.
+
+\begin{theorem}[EH matching with boundary control]\label{thm:EH}
+On 4D Minkowski and weakly curved conformal controls $g=\Omega^2\eta$ with $\Omega\in C^3$ slowly varying, there exist constants $(G,\Lambda)$ and coefficients $(\alpha,\beta)$ such that, for compactly supported $\phi\in C_c^3$,
+\[
+S_{\rm BD}[\phi]=\int \Big( \tfrac{1}{2}\,\phi\,\Box_g \phi \Big)\sqrt{-g}\,d^4x
++ \int \Big(\tfrac{R}{16\pi G}-\Lambda\Big)\sqrt{-g}\,d^4x
++ O(\ellc^{\,p}),
+\]
+for some $p>0$, uniformly on finite regions after shaving a boundary collar of thickness $\Theta(\ellc)$.
+\end{theorem}
+
+\noindent\emph{Proof sketch.}
+(i) By Paper II’s Theorem, $B_{\rm BDG}\to\Box$ in $L^2$ with rate $O(\ellc^{\,p})$. (ii) Replace layer sums by lightcone integrals and match coefficients to recover the continuum quadratic form; residuals are controlled by moment cancellations (Aslanbeigi–Saravani–Sorkin) and smoothness of $\phi$. (iii) Choose $(\alpha,\beta)$ to cancel boundary/discretization biases tied to “dangling” intervals near $\partial D$. (iv) Weak curvature: linearize in $\Omega-1$ to capture $R$ and $\Lambda$ terms; the BD density surrogate tracks $\sqrt{-g}$ to first order. \qed
+
+\section{Controls and acceptance criteria}
+
+\subsection{FLRW (Friedmann residuals)}
+\textbf{Acceptance:} median absolute residual of the Hamiltonian constraint decreases with refinement; log–log slope $>0.5$ (95\% CI).
+\begin{figure}[H]\centering
+\SafeGraphic{friedmann_check.png}{0.80}
+\caption{FLRW residuals vs $\ellc$. \textbf{Falsifier:} nonshrinking or nonmonotone residuals.}
+\end{figure}
+
+\subsection{Newtonian limit (Poisson residuals)}
+\textbf{Acceptance:} $L^2$ error of the BD Laplacian surrogate vs Poisson $\propto \ellc^{\,p}$ with $p>0.5$ (95\% CI).
+\begin{figure}[H]\centering
+\SafeGraphic{poisson_residuals.png}{0.80}
+\caption{Poisson residuals. \textbf{Falsifier:} exponent $\le 0$.}
+\end{figure}
+
+\subsection{Linear waves (dispersion)}
+\textbf{Acceptance:} dispersion error $<5\%$ over a mid-$k$ window at top size; error decreases with $N$.
+\begin{figure}[H]\centering
+\SafeGraphic{dispersion_waves.png}{0.80}
+\caption{Wave dispersion. \textbf{Falsifier:} $>5\%$ error or no refinement trend.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community.
+
+\appendix
+\section{Boundary collars and counterterms}
+We summarize the structure of $S_{\rm bdry}$ and the collar choice that isolates bulk rates.
+
+% Ensure refs appear
+\nocite{Wald1984,BenincasaDowker2010,AslanbeigiEtAl2014}
+
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_III}
+
+\end{document}

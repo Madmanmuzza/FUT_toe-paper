@@ -1,0 +1,154 @@
+%===========================%
+%  Paper IX (standalone)    %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_IX.bib on compile)
+\begin{filecontents*}{paper_IX.bib}
+@article{KosteleckyRussellDataTables,
+  author  = {Kosteleck{\'y}, V. Alan and Russell, Neil},
+  title   = {Data Tables for Lorentz and CPT Violation},
+  journal = {Rev. Mod. Phys. (living review; arXiv updates)},
+  year    = {2011}
+}
+@book{Will2014,
+  author  = {Will, Clifford M.},
+  title   = {Theory and Experiment in Gravitational Physics},
+  publisher = {Cambridge University Press},
+  year    = {2014}
+}
+@article{TouboulMICROSCOPE2017,
+  author  = {Touboul, Pierre and others},
+  title   = {MICROSCOPE Mission---First Results},
+  journal = {Phys. Rev. Lett.},
+  year    = {2017},
+  volume  = {119},
+  pages   = {231101},
+  doi     = {10.1103/PhysRevLett.119.231101}
+}
+@article{AbdoFermiGRB2009,
+  author  = {Abdo, A. A. and others (Fermi LAT/GBM)},
+  title   = {A limit on the variation of the speed of light arising from quantum gravity effects},
+  journal = {Nature},
+  year    = {2009},
+  volume  = {462},
+  pages   = {331--334},
+  doi     = {10.1038/nature08574}
+}
+@article{MaccioneLiberati2013,
+  author  = {Maccione, Luca and Liberati, Stefano},
+  title   = {Constraints on Lorentz invariance violation from high-energy astrophysics},
+  journal = {JCAP},
+  year    = {2013}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+
+% --- hyperlinks
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem envs
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% --- shorthands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell}
+
+% --- figure paths
+\graphicspath{{figs9/}{paper9/figs/}}
+
+% --- robust include
+\newcommand{\SafeGraphic}[2]{% #1 file, #2 width frac
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}%
+  }%
+}
+
+\title{Paper IX: Consistency Tests, Lorentz/Equivalence Principles,\\
+and Precision Bounds for BD Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We consolidate precision tests of the BD framework: Lorentz-invariance violation (LIV) bounds, time-of-flight constraints, vacuum \v{C}erenkov exclusions, and equivalence-principle (EP) limits. We state explicit acceptance thresholds (falsifiers). All putative BD corrections must shrink with coarse length $\ellc\!\sim\!(\mathrm{Vol}/N)^{1/4}$; any nonshrinking anomaly falsifies the model at this scope.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; sizes $N\!\in\!\{2^{10},2^{11},2^{12},2^{13}\}$. For each $N$ compute medians and IQRs across seeds. When comparing to external bounds we only require that BD predictions fall \emph{below} the current best limits with a safety margin and trend to zero as $\ellc\!\to\!0$.
+
+\section{LIV bounds from dispersion/propagation}
+Parameterize small LIV by a dimensionless $\delta$ entering dispersion or group velocity: $E^2=p^2+m^2+\delta\,p^2+\cdots$. We infer an upper bound $|\delta|(\mu)$ from BD propagation diagnostics at scale $\mu\!\equiv\!\ellc^{-1}$ and plot the envelope against a proxy energy $E$ (SME-style \citep{KosteleckyRussellDataTables}).
+\begin{figure}[H]\centering
+\SafeGraphic{lorentz_violation_bounds.png}{0.80}
+\caption{Upper bounds on $|\delta|$ vs energy scale $E$ (illustrative). \textbf{Acceptance:} median slope negative on log–log ($d\log|\delta|/d\log E<0$) and $|\delta|$ at the top size sits \emph{below} current best bounds with a factor $\gtrsim2$ margin. \textbf{Falsifier:} flat/increasing slope or no margin at the top size.}
+\end{figure}
+
+\section{Time-of-flight constraints (GRB-like)}
+Energy-dependent arrival delays $\Delta t(E)$ would signal LIV. We regress residual arrival times after removing source lag models (nuisance), estimating slope $\alpha$ in $\Delta t\!\propto\!E^\alpha$ (cf.\ Fermi \citep{AbdoFermiGRB2009}).
+\begin{figure}[H]\centering
+\SafeGraphic{time_of_flight_constraints.png}{0.80}
+\caption{Residual arrival time vs photon energy. \textbf{Acceptance:} slope consistent with $0$ (95\% CI includes $0$) and CI width shrinks with $\ellc$. \textbf{Falsifier:} nonzero slope with sign stable across seeds/sizes or CI not shrinking.}
+\end{figure}
+
+\section{Vacuum \v{C}erenkov exclusions}
+If charged particles can exceed the photon front velocity, vacuum \v{C}erenkov emission forces rapid energy loss, excluding regions in $(p,\epsilon)$ parameter space \citep{MaccioneLiberati2013}. We map BD corrections to $(p,\epsilon)$ and check they lie in the allowed region with margin.
+\begin{figure}[H]\centering
+\SafeGraphic{vacuum_cherenkov_exclusion.png}{0.80}
+\caption{Excluded (shaded) region in $(p,\epsilon)$. \textbf{Acceptance:} BD point remains outside the excluded region with safety margin that \emph{increases} as $\ellc\!\to\!0$. \textbf{Falsifier:} entry into the exclusion region or vanishing margin at top size.}
+\end{figure}
+
+\section{Equivalence principle (EP) bounds}
+We track BD-induced differences between inertial and gravitational responses, summarized by the E\"otv\"os parameter $\eta = 2|a_1-a_2|/(a_1+a_2)$ for two compositions \citep{Will2014}. We compare with laboratory/space bounds (torsion balances, LLR, MICROSCOPE \citep{TouboulMICROSCOPE2017}).
+\begin{figure}[H]\centering
+\SafeGraphic{equivalence_principle_bounds.png}{0.80}
+\caption{Illustrative EP bounds on $|\eta|$ across probes (log scale). \textbf{Acceptance:} predicted $|\eta|$ falls below the tightest current bound with a factor $\gtrsim2$ margin at the top size and decreases with refinement. \textbf{Falsifier:} no margin or nonshrinking $|\eta|(\ellc)$.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+\appendix
+
+\section{Mapping BD corrections to SME-like parameters}
+We linearize the BD-induced response of the kinetic operator and group velocity to define effective SME-style coefficients, keeping leading powers in $\ellc$.
+
+\section{Time-of-flight regression details}
+We use robust regression with source-lag nuisance terms and bootstrap CIs; multiple transients can be combined by hierarchical pooling.
+
+\section{EP mapping and systematics}
+We outline how interval-abundance-based density surrogates enter test-mass accelerations and discuss composition dependence and shielding systematics.
+
+% Ensure core references appear even if not cited explicitly
+\nocite{KosteleckyRussellDataTables,AbdoFermiGRB2009,MaccioneLiberati2013,TouboulMICROSCOPE2017,Will2014}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_IX}
+
+\end{document}

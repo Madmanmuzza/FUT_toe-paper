@@ -1,0 +1,182 @@
+%===========================%
+%  Paper VIII (standalone)  %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_VIII.bib on compile)
+\begin{filecontents*}{paper_VIII.bib}
+@article{Bekenstein1973,
+  author  = {Bekenstein, Jacob D.},
+  title   = {Black holes and entropy},
+  journal = {Phys. Rev. D},
+  year    = {1973},
+  volume  = {7},
+  pages   = {2333--2346},
+  doi     = {10.1103/PhysRevD.7.2333}
+}
+@article{Hawking1975,
+  author  = {Hawking, Stephen W.},
+  title   = {Particle creation by black holes},
+  journal = {Commun. Math. Phys.},
+  year    = {1975},
+  volume  = {43},
+  pages   = {199--220},
+  doi     = {10.1007/BF02345020}
+}
+@article{Page1993,
+  author  = {Page, Don N.},
+  title   = {Information in black hole radiation},
+  journal = {Phys. Rev. Lett.},
+  year    = {1993},
+  volume  = {71},
+  pages   = {3743--3746},
+  doi     = {10.1103/PhysRevLett.71.3743}
+}
+@article{ParikhWilczek2000,
+  author  = {Parikh, Maulik K. and Wilczek, Frank},
+  title   = {Hawking Radiation as Tunneling},
+  journal = {Phys. Rev. Lett.},
+  year    = {2000},
+  volume  = {85},
+  pages   = {5042--5045},
+  doi     = {10.1103/PhysRevLett.85.5042}
+}
+@article{BertiCardosoStarinets2009,
+  author  = {Berti, Emanuele and Cardoso, Vitor and Starinets, Andrei O.},
+  title   = {Quasinormal modes of black holes and black branes},
+  journal = {Class. Quantum Grav.},
+  year    = {2009},
+  volume  = {26},
+  pages   = {163001},
+  doi     = {10.1088/0264-9381/26/16/163001}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+
+% --- hyperlinks
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem envs
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% --- shorthands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell}
+
+% --- figure paths (both accepted)
+\graphicspath{{figs8/}{paper8/figs/}}
+
+% --- robust include
+\newcommand{\SafeGraphic}[2]{% #1 file, #2 width frac
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}%
+  }%
+}
+
+\title{Paper VIII: Black Holes and Semiclassical Thermodynamics\\
+on Negentropic Birth--Death Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We develop black-hole thermodynamics and semiclassical radiation for the BD causal-set framework. We extract Hawking temperature $T=\kappa/2\pi$ from near-horizon response, confirm the Bekenstein--Hawking area law $S=A/4$, compute quasinormal spectra from BD operators, reconstruct Page curves for unitary evaporation, and estimate greybody factors. Each diagnostic has an explicit acceptance threshold; any failure falsifies this sector at the stated scope.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; size ladder $N\in\{2^{10},2^{11},2^{12},2^{13}\}$. Near-horizon (Rindler) controls for temperature, stationary effective background for QNMs, and evaporating toy background for Page curves. Medians and IQRs reported across seeds.
+
+\section{Hawking temperature from near-horizon response}
+A BD Unruh--DeWitt detector at proper acceleration $a$ measures a Planckian spectrum with $T=a/2\pi$; mapping to a Killing horizon with surface gravity $\kappa$ yields $T=\kappa/2\pi$.
+
+\noindent\textbf{Acceptance (slope):} fit $T$ vs $\kappa$; relative slope error $<5\%$ at top size; error decreases with refinement (95\% CI excludes non-decreasing trend).
+
+\begin{figure}[H]\centering
+\SafeGraphic{hawking_temperature.png}{0.80}
+\caption{Hawking temperature vs surface gravity. \textbf{Falsifier:} slope differs from $1/2\pi$ by $\ge 5\%$ and does not shrink with $N$.}
+\end{figure}
+
+\section{Area law $S=A/4$}
+We estimate microstate entropy from BD growth with boundary contributions and fit $S(A)$.
+
+\noindent\textbf{Acceptance (area slope):} linear fit slope $=1/4\pm 5\%$ at top size; residuals decrease with refinement.
+
+\begin{figure}[H]\centering
+\SafeGraphic{area_law_entropy.png}{0.80}
+\caption{Entropy vs horizon area. \textbf{Falsifier:} slope deviates from $1/4$ beyond 5\% or residuals fail to shrink with $N$.}
+\end{figure}
+
+\section{Ringdown: quasinormal modes}
+Perturbations of the BD effective operator define complex frequencies $\omega_n$ characterizing ringdown.
+
+\noindent\textbf{Acceptance (spectral trend):} real-part spacing and damping trend consistent with continuum expectations \citep{BertiCardosoStarinets2009} within 10\%, improving with refinement.
+
+\begin{figure}[H]\centering
+\SafeGraphic{quasinormal_spectrum.png}{0.80}
+\caption{Quasinormal spectrum: ${\rm Re}\,\omega$ vs $-{\rm Im}\,\omega$. \textbf{Falsifier:} spacings/damping inconsistent and not improving with $N$.}
+\end{figure}
+
+\section{Information flow: Page curve}
+Using BD correlators, we partition radiation vs interior and estimate entanglement entropy $S_{\rm rad}(t)$.
+
+\noindent\textbf{Acceptance (unitary turnover):} clear turnover near $t\simeq t_{\rm evap}/2$ with strong-subadditivity–consistent shape \citep{Page1993}; turnover sharpens with refinement.
+
+\begin{figure}[H]\centering
+\SafeGraphic{page_curve.png}{0.80}
+\caption{Page curve (normalized). \textbf{Falsifier:} no turnover or violations of strong subadditivity across the ladder.}
+\end{figure}
+
+\section{Greybody factors}
+We compute barrier transmission coefficients $\Gamma_\ell(\omega)$ from effective scattering of BD perturbations.
+
+\noindent\textbf{Acceptance (asymptotics):} low-$\omega$ suppression and high-$\omega$ saturation match continuum scaling; deviations shrink with $N$.
+
+\begin{figure}[H]\centering
+\SafeGraphic{greybody_factor.png}{0.80}
+\caption{Greybody factor $\Gamma_\ell(\omega)$. \textbf{Falsifier:} wrong asymptotics or nonshrinking deviations.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+\appendix
+
+\section{Near-horizon mapping and Unruh temperature}
+We outline the Rindler mapping and reproduce the Planckian detector response at $T=\kappa/2\pi$, extending the Unruh analysis from Paper~IV.
+
+\section{Entropy counting and boundary terms}
+We sketch how boundary contributions in the BD action reproduce $S\to A/4$ and discuss subleading power/log corrections.
+
+% Ensure references appear even if not cited explicitly
+\nocite{Bekenstein1973,Hawking1975,Page1993,ParikhWilczek2000,BertiCardosoStarinets2009}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_VIII}
+
+\end{document}

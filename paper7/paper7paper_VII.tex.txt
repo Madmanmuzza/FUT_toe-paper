@@ -1,0 +1,167 @@
+%===========================%
+%  Paper VII (standalone)   %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_VII.bib on compile)
+\begin{filecontents*}{paper_VII.bib}
+@article{Planck2018,
+  author  = {{Planck Collaboration}},
+  title   = {Planck 2018 results. VI. Cosmological parameters},
+  journal = {A\&A},
+  year    = {2020},
+  volume  = {641},
+  pages   = {A6},
+  doi     = {10.1051/0004-6361/201833910}
+}
+@article{Cyburt2016,
+  author  = {Cyburt, Richard H. and Fields, Brian D. and Olive, Keith A. and Yeh, Tsung-Han},
+  title   = {Big Bang Nucleosynthesis: 2015},
+  journal = {Rev. Mod. Phys.},
+  year    = {2016},
+  volume  = {88},
+  pages   = {015004},
+  doi     = {10.1103/RevModPhys.88.015004}
+}
+@article{LIGOstoch2019,
+  author  = {Abbott, B. P. et al. (LIGO Scientific Collaboration and Virgo Collaboration)},
+  title   = {Directionally independent constraints on the stochastic gravitational-wave background},
+  journal = {Phys. Rev. Lett.},
+  year    = {2019},
+  volume  = {123},
+  pages   = {231101},
+  doi     = {10.1103/PhysRevLett.123.231101}
+}
+@article{BOSSDR12,
+  author  = {Anderson, Lauren et al.},
+  title   = {The clustering of galaxies in the SDSS-III Baryon Oscillation Spectroscopic Survey},
+  journal = {MNRAS},
+  year    = {2014},
+  volume  = {441},
+  pages   = {24--62},
+  doi     = {10.1093/mnras/stu523}
+}
+@phdthesis{Meyer1988,
+  author  = {Meyer, David A.},
+  title   = {The Dimension of Causal Sets},
+  school  = {MIT},
+  year    = {1988}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+
+% --- hyperlink setup
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem envs
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% --- shorthands
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell} % coarse length
+
+% --- figure paths
+\graphicspath{{figs7/}{paper7/figs/}}
+
+% --- robust include
+\newcommand{\SafeGraphic}[2]{% #1 file, #2 width frac
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}%
+  }%
+}
+
+\title{Paper VII: Cosmology and Phenomenology\\
+for Negentropic Birth--Death Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We confront the BD causal-set framework with precision cosmology. A minimal BD$\to$FLRW map defines effective parameters $(H_0,\Omega_m,\Omega_\Lambda,n_s,\sigma_8)$. We quantify CMB, LSS, BBN, and SGWB signatures and impose explicit acceptance thresholds (falsifiers). Any threshold failure rules out the model at this scope; all deviations must shrink with coarse length $\ellc\sim(\mathrm{Vol}/N)^{1/4}$.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; size ladder $N\in\{2^{10},2^{11},2^{12},2^{13}\}$. For each $N$, construct Minkowski/FLRW controls and compute medians and IQRs across seeds. All reported deviations are functions of $\ellc$ with bootstrap 95\% CIs.
+
+\section{Parameter mapping and small-$\ellc$ behavior}
+Paper~III fixed $(G,\Lambda)$ by EH matching; Papers~IV–V calibrated quantum kernels and flows. We linearize BD corrections around $\Lambda$CDM: each effective parameter $X$ maps to $X(\ellc)=X_0+\delta_X(\ellc)$ with $\delta_X(\ellc)\to0$ as $\ellc\to0$.
+
+\section{CMB power spectra}
+We analyze TT residuals $\Delta C_\ell/C_\ell$ against Planck~2018 \citep{Planck2018}.
+\begin{figure}[H]\centering
+\SafeGraphic{cmb_residuals.png}{0.80}
+\caption{CMB TT residuals $\Delta C_\ell/C_\ell$. \textbf{Acceptance:} $|\Delta C_\ell|/C_\ell \lesssim 1\%$ over acoustic peaks, with residual amplitude decreasing as $\ellc$ shrinks. \textbf{Falsifier:} stable $>\!1\%$ residuals or no $\ellc$-trend.}
+\end{figure}
+
+\section{Large-scale structure (galaxy clustering)}
+We compute the matter power ratio $R(k)=P_{\mathrm{BD}}(k)/P_{\Lambda\mathrm{CDM}}(k)$ and compare to BOSS DR12 scales \citep{BOSSDR12}.
+\begin{figure}[H]\centering
+\SafeGraphic{matter_power_ratio.png}{0.80}
+\caption{Matter power ratio $R(k)$. \textbf{Acceptance:} broad deviations $\lesssim 2\%$ on $k\in[0.02,0.2]\ h\,\mathrm{Mpc}^{-1}$ that move toward $R\!=\!1$ as $\ellc\to0$. \textbf{Falsifier:} a fixed, nonshrinking feature at physical $k$.}
+\end{figure}
+
+\section{Big Bang Nucleosynthesis (BBN)}
+We propagate BD corrections to expansion into abundances $Y_p$ and D/H \citep{Cyburt2016}.
+\begin{figure}[H]\centering
+\SafeGraphic{bbn_abundances.png}{0.80}
+\caption{He-4 mass fraction $Y_p$ and $10^5\,\mathrm{D/H}$ vs $\eta$. \textbf{Acceptance:} predictions lie within observational bands for $\eta$ consistent with CMB; BD-induced shifts shrink with $\ellc$. \textbf{Falsifier:} band crossing that persists with refinement.}
+\end{figure}
+
+\section{Stochastic gravitational-wave background (SGWB)}
+We compute $\Omega_{\mathrm{GW}}(f)$ from BD early-time dynamics and compare with broadband interferometer limits \citep{LIGOstoch2019}.
+\begin{figure}[H]\centering
+\SafeGraphic{gw_background.png}{0.80}
+\caption{Predicted $\Omega_{\mathrm{GW}}(f)$. \textbf{Acceptance:} curve stays below current bounds and features (knees/plateaus) shift/suppress with $\ellc$. \textbf{Falsifier:} violation of bounds or nonshrinking features at fixed $f$.}
+\end{figure}
+
+\section{Global parameter consistency}
+Joint constraints from CMB, LSS, BBN, SGWB must be mutually compatible under the same BD parameters.
+\begin{figure}[H]\centering
+\SafeGraphic{H0_Omegam_constraints.png}{0.80}
+\caption{Constraint cloud in $(H_0,\Omega_m)$. \textbf{Acceptance:} overlapping 95\% regions across probes as $\ellc\to0$. \textbf{Falsifier:} persistent tension that does not shrink with refinement.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+\appendix
+
+\section{BD$\to$FLRW linear map}
+We give the linear response of background/perturbation equations to BD corrections, retaining leading powers in $\ellc$ and mapping them to $(H_0,\Omega_m,\Omega_\Lambda,n_s,\sigma_8)$.
+
+\section{Likelihood composition}
+We outline modular likelihoods for TT spectra, $P(k)$ bandpowers, BBN abundances, and $\Omega_{\mathrm{GW}}(f)$; posteriors are combined with independent systematics at first pass.
+
+% Ensure core references appear even if not cited explicitly
+\nocite{Planck2018,BOSSDR12,Cyburt2016,LIGOstoch2019,Meyer1988}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_VII}
+
+\end{document}

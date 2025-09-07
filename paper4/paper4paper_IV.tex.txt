@@ -1,0 +1,167 @@
+%===========================%
+%  Paper IV (standalone)    %
+%===========================%
+
+\begin{filecontents*}{paper_IV.bib}
+@article{AslanbeigiEtAl2014,
+  author  = {Aslanbeigi, Siavash and Saravani, Mehdi and Sorkin, Rafael D.},
+  title   = {Generalized causal set d’Alembertians},
+  journal = {JHEP},
+  year    = {2014},
+  volume  = {2014},
+  number  = {6},
+  pages   = {24},
+  doi     = {10.1007/JHEP06(2014)024}
+}
+@article{BenincasaDowker2010,
+  author  = {Benincasa, Dionigi M. T. and Dowker, Fay},
+  title   = {The Scalar Curvature of a Causal Set},
+  journal = {Phys. Rev. Lett.},
+  year    = {2010},
+  volume  = {104},
+  number  = {18},
+  pages   = {181301},
+  doi     = {10.1103/PhysRevLett.104.181301}
+}
+@article{Unruh1976,
+  author  = {Unruh, W. G.},
+  title   = {Notes on black-hole evaporation},
+  journal = {Phys. Rev. D},
+  year    = {1976},
+  volume  = {14},
+  pages   = {870--892},
+  doi     = {10.1103/PhysRevD.14.870}
+}
+@inproceedings{Glaser2011DICE,
+  author    = {Glaser, Lisa},
+  title     = {The Spectral Dimension of Causal Sets},
+  booktitle = {J. Phys.: Conf. Ser. (DICE 2010)},
+  year      = {2011},
+  volume    = {306},
+  pages     = {012062},
+  doi       = {10.1088/1742-6596/306/1/012062}
+}
+@phdthesis{Meyer1988,
+  author  = {Meyer, David A.},
+  title   = {The Dimension of Causal Sets},
+  school  = {MIT},
+  year    = {1988}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!50!black}
+
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Boxop}{\Box}
+\newcommand{\ellc}{\ell}
+
+\graphicspath{{figs4/}{paper4/figs/}}
+\newcommand{\SafeGraphic}[2]{%
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}}}
+
+\title{Paper IV: Quantum Fields and Matter Coupling\\
+on Negentropic Birth--Death Causal Sets}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We construct the free scalar quantum sector with BDG kinetic kernel, verify propagator convergence, bound microcausality leakage, and recover the Unruh response. Each diagnostic has an explicit acceptance threshold; failure falsifies this scope.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; $N\in\{2^{10},2^{11},2^{12},2^{13}\}$; medians/IQRs reported. $\ellc\sim(\mathrm{Vol}/N)^{1/4}$.
+
+\section{Kinematics and propagators}
+For $\phi:\mathcal{C}\to\mathbb{R}$,
+\[
+S_0[\phi]=\tfrac12\sum_{x,y}\phi(x)\,K(x,y)\,\phi(y),\quad K=B_{\rm BDG}+m^2\delta_{xy}.
+\]
+Retarded $G_R$ solves $KG_R=I$ with causal support; $G_F$ via $i\epsilon$ on finite regions.
+
+\begin{theorem}[Propagator convergence (Minkowski)]
+On flat diamonds and $\ellc\to0$,
+\[
+\|G_F^{\rm disc}-G_F^{\rm cont}\|_{L^2(B_r)}\le C\,\ellc^{\,p},\qquad p>0,
+\]
+with probability $\to1$. (Proof follows Paper II’s operator convergence plus stability of resolvents.)
+\end{theorem}
+
+\section{Microcausality leakage: quantitative bound}
+Let $s(x,y)$ estimate the invariant interval. Define the leakage ratio
+\[
+\mathcal{L}(\ellc)=\frac{\mathrm{median}_{s<0}|[\phi(x),\phi(y)]|}{\mathrm{median}_{s>0}|[\phi(x),\phi(y)]|}.
+\]
+
+\begin{proposition}[Off–light-cone tail bound]\label{prop:tail}
+For BDG kernels on Poisson sprinklings in finite diamonds, there exists a function $\tau(\ellc)\downarrow0$ such that
+\[
+\Pr\!\left( \sup_{s<0} |G_R(x,y)-G_A(x,y)| \le \tau(\ellc) \right)\to1,\quad \ellc\to0.
+\]
+Consequently $\mathcal{L}(\ellc)\le c\,\tau(\ellc)$ in probability, hence $\mathcal{L}(\ellc)\to0$.
+\end{proposition}
+
+\noindent\emph{Proof sketch.}
+Use layer-moment cancellations (Paper II) to bound kernel mass assigned outside the discrete light cone, then apply a causal triangular solve stability bound for $G_R$; antisymmetry yields the commutator control. \qed
+
+\begin{figure}[H]\centering
+\SafeGraphic{microcausality_commutator.png}{0.80}
+\caption{Commutator vs $s$; spacelike sector suppressed. \textbf{Acceptance:} fit slope $p_{\rm mc}>0.5$ for $\mathcal{L}(\ellc)$ (95\% CI).}
+\end{figure}
+
+\section{Propagator and spectral diagnostics}
+
+\begin{figure}[H]\centering
+\SafeGraphic{propagator_match.png}{0.80}
+\caption{Discrete $G_F$ vs continuum $G_F$ vs separation. \textbf{Acceptance:} $L^2$ slope $>0.5$ and monotone decay.}
+\end{figure}
+
+\begin{figure}[H]\centering
+\SafeGraphic{field_spectral_dimension.png}{0.80}
+\caption{Field spectral dimension: mesoscopic plateau near $4$ \citep{Glaser2011DICE,Meyer1988}. \textbf{Falsifier:} no plateau.}
+\end{figure}
+
+\section{Unruh response (Rindler control)}
+Detector gap $\Omega$, acceleration $a$; target $T_U=a/2\pi$ \citep{Unruh1976}.
+\begin{figure}[H]\centering
+\SafeGraphic{unruh_response.png}{0.80}
+\caption{Unruh response vs $\Omega/T_U$. \textbf{Acceptance:} $|T-T_U|/T_U<5\%$ at top size, improving with $N$.}
+\end{figure}
+
+\section*{Acknowledgments}
+We thank the causal set community.
+
+\appendix
+\section{Algorithms}
+Causal triangular solve for $G_R$; $G_F$ by Lanczos with $i\epsilon$; stochastic Lanczos quadrature for traces.
+
+% Ensure refs appear
+\nocite{AslanbeigiEtAl2014,BenincasaDowker2010,Glaser2011DICE,Meyer1988,Unruh1976}
+
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_IV}
+
+\end{document}

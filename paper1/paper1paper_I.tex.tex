@@ -1,0 +1,255 @@
+%===========================%
+%  Paper I (standalone)     %
+%===========================%
+
+% -- Self-contained bibliography (writes paper_I.bib on compile)
+\begin{filecontents*}{paper_I.bib}
+@article{Bombelli1987,
+  author  = {Bombelli, L. and Lee, J. and Meyer, D. and Sorkin, R.},
+  title   = {Space-time as a causal set},
+  journal = {Phys. Rev. Lett.},
+  year    = {1987},
+  volume  = {59},
+  pages   = {521--524},
+  doi     = {10.1103/PhysRevLett.59.521}
+}
+@phdthesis{Meyer1988Dim,
+  author  = {Meyer, David A.},
+  title   = {The Dimension of Causal Sets},
+  school  = {MIT},
+  year    = {1988}
+}
+@article{Myrheim1978,
+  author  = {Myrheim, Jan},
+  title   = {Statistical Geometry},
+  journal = {CERN preprint TH-2538},
+  year    = {1978}
+}
+@article{BenincasaDowker2010,
+  author  = {Benincasa, Dionigi M. T. and Dowker, Fay},
+  title   = {The Scalar Curvature of a Causal Set},
+  journal = {Phys. Rev. Lett.},
+  year    = {2010},
+  volume  = {104},
+  number  = {18},
+  pages   = {181301},
+  doi     = {10.1103/PhysRevLett.104.181301}
+}
+@article{AslanbeigiEtAl2014,
+  author  = {Aslanbeigi, Siavash and Saravani, Mehdi and Sorkin, Rafael D.},
+  title   = {Generalized causal set d'Alembertians},
+  journal = {JHEP},
+  year    = {2014},
+  volume  = {2014},
+  number  = {6},
+  pages   = {24},
+  doi     = {10.1007/JHEP06(2014)024}
+}
+@book{LevinPeresWilmer2009,
+  author  = {Levin, David A. and Peres, Yuval and Wilmer, Elizabeth L.},
+  title   = {Markov Chains and Mixing Times},
+  publisher = {American Mathematical Society},
+  year    = {2009}
+}
+@book{MeynTweedie2009,
+  author  = {Meyn, Sean P. and Tweedie, Richard L.},
+  title   = {Markov Chains and Stochastic Stability},
+  edition = {2nd},
+  publisher = {Cambridge University Press},
+  year    = {2009}
+}
+@article{Doeblin1937,
+  author  = {Doeblin, Wolfgang},
+  title   = {Remarques sur la th\'eorie m\'etrique des produits de cha\^ines de Markoff},
+  journal = {Bull. Soc. Math. France},
+  year    = {1937},
+  volume  = {65},
+  pages   = {132--148}
+}
+\end{filecontents*}
+
+\documentclass[11pt]{article}
+
+% --- packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{bm}
+
+% --- hyperlinks
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% --- theorem envs & shorthands
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ellc}{\ell} % coarse length
+
+% --- figures
+\graphicspath{{figs1/}{paper1/figs/}}
+\newcommand{\SafeGraphic}[2]{%
+  \IfFileExists{#1}{\includegraphics[width=#2\linewidth]{#1}}{%
+    \fbox{\parbox[c][2.0in][c]{#2\linewidth}{\centering\small \textsf{Missing figure:}\\\texttt{#1}}}}}
+
+\title{Paper I: Negentropic Birth--Death Dynamics and Foundational Diagnostics\\
+for Causal Sets (with a Doeblin/ Coupling Proof of Well-posedness)}
+\author{Daniel J. Murray}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We define a normalized, saturated negentropic birth--death (BD) dynamics for causal sets on a finite Alexandrov interval and give a full Doeblin/coupling proof of well-posedness: the labeled Hasse-diagram chain is uniformly ergodic with a unique stationary distribution, hence the unlabeled chain has a unique invariant measure. We then calibrate core observables (interval abundances, Myrheim--Meyer dimension, link/degree statistics) against 4D Minkowski sprinklings and state falsifiers.
+\end{abstract}
+
+\paragraph{Run configuration.}
+Seeds $=8$; sizes $N\in\{2^{10},2^{11},2^{12},2^{13}\}$. Coarse length $\ellc\sim(\mathrm{Vol}/N)^{1/4}$. Report medians and IQRs.
+
+%==========================================================
+\section{Dynamics and assumptions}
+Let $D\subset \mathbb{M}^{1,3}$ be a fixed finite Alexandrov interval. A \emph{state} is a labeled Hasse diagram $(V,\prec)$ embedded in $D$ with $|V|\le N_{\max}$ (defined below). One BD step is either a \emph{birth} (insert a new element $x\in D$ and draw links consistent with $\prec$ by a local rule) or a \emph{death} (delete a locally saturated redundancy), with probabilities depending on interval statistics in a bounded neighborhood.
+
+We impose minimal nondegeneracy/regularity assumptions on the \emph{normalized, saturated} BD kernel $K$:
+\begin{itemize}
+\item[(A1) Locality.] Birth/death decisions and link draws depend only on order neighborhoods within a fixed radius (layer depth) $r$.
+\item[(A2) Positivity bounds.] There exist constants
+\[
+\underline{p}_{\rm add},\ \underline{p}_{\rm del},\ \underline{p}_{\rm link},\ \underline{p}_{\rm loc}\in(0,1)
+\]
+such that whenever a birth (or deletion, respectively) is admissible, it is chosen with probability at least the corresponding lower bound; conditional link decisions have probability at least $\underline{p}_{\rm link}$ for each admissible parent/child choice; the location proposal for a new element has density lower bounded by $\underline{p}_{\rm loc}/\mathrm{Vol}(D)$ on $D$.
+\item[(A3) Saturation (finite local density).] There exists $N_{\max}<\infty$ such that if $|V|\ge N_{\max}$, then a deletion is admissible and is chosen with probability at least $\underline{p}_{\rm del}$ until $|V|<N_{\max}$. (Equivalently: the kernel enforces a hard or soft cap that prevents unbounded growth.)
+\item[(A4) Aperiodicity (lazy variant).] For theoretical guarantees we analyze the $1/2$-lazy kernel $K_\ell=\tfrac12(I+K)$, which shares the same invariant measure and improves to aperiodicity \cite{LevinPeresWilmer2009}.
+\end{itemize}
+Assumptions (A1)--(A3) are satisfied by the negentropic BD rules used throughout (local scoring of interval patterns; normalized choices; saturation pruning). We will prove uniform ergodicity for the labeled chain; invariance under relabeling then induces a unique measure on unlabeled causal sets.
+
+%==========================================================
+\section{Well-posedness via Doeblin minorization and coupling}
+Let $\mathsf{S}$ be the finite state space of labeled Hasse diagrams $(V,\prec)$ with $|V|\le N_{\max}$ in $D$. All proofs below refer to the lazy kernel $K_\ell$ (henceforth $K$).
+
+\begin{lemma}[Finite state]\label{lem:finite}
+Under (A3) the number of elements is bounded by $N_{\max}$; for each $n\le N_{\max}$ the number of labeled partial orders on $n$ elements is finite. Hence $|\mathsf{S}|<\infty$.
+\end{lemma}
+
+\begin{lemma}[Uniform hit to an atom]\label{lem:toatom}
+Fix the \emph{atom} state $o$ (the one-element poset). Under (A2)--(A3), there exists $t_1\le N_{\max}-1$ and $\varepsilon_1>0$ such that for all $x\in\mathsf{S}$,
+\[
+K^{t_1}(x,\{o\}) \ \ge\ \varepsilon_1 \ :=\ (\tfrac12\,\underline{p}_{\rm del})^{\,N_{\max}-1}.
+\]
+\emph{Proof.} From any $x$ with $n$ elements, successive deletions reduce $n\to n-1$ until $1$. Each deletion happens with probability at least $\tfrac12\underline{p}_{\rm del}$ under laziness; at most $N_{\max}-1$ steps are needed. Multiply the lower bounds. \qed
+\end{lemma}
+
+\begin{lemma}[Uniform regeneration from the atom]\label{lem:fromatom}
+There exists $t_2\le N_{\max}-1$ and $\varepsilon_2>0$ such that for all measurable $A\subseteq\mathsf{S}$,
+\[
+K^{t_2}(o,A)\ \ge\ \varepsilon_2\,\nu(A), \qquad \nu:=K^{t_2}(o,\cdot),
+\]
+with $\varepsilon_2 := \big(\tfrac12\,\underline{p}_{\rm add}\,\underline{p}_{\rm loc}\,\underline{p}_{\rm link}^{\,c_r}\big)^{N_{\max}-1}$, where $c_r$ bounds the number of link decisions per birth under (A1).
+\emph{Proof.} Fix any target state $y$ with $m\le N_{\max}$ elements and a canonical order of insertions respecting $\prec_y$. Starting at $o$, in each step: choose birth (prob.\ $\ge\tfrac12\underline{p}_{\rm add}$), sample location (density $\ge \underline{p}_{\rm loc}/\mathrm{Vol}(D)$ in a pre-chosen ball), and realize the required local links (each with prob.\ $\ge\underline{p}_{\rm link}$). The product lower bound gives a uniform minimal probability for the canonical path. Taking $t_2=m-1\le N_{\max}-1$ and defining $\nu$ as stated yields the minorization from $o$. \qed
+\end{lemma}
+
+\begin{theorem}[Doeblin minorization, uniform ergodicity, uniqueness]\label{thm:doeblin}
+Under (A1)--(A4), there exist $T=t_1+t_2$ and $\varepsilon=\varepsilon_1\varepsilon_2>0$ such that for all $x\in\mathsf{S}$ and measurable $A\subseteq \mathsf{S}$,
+\[
+K^{T}(x,A)\ \ge\ \varepsilon\,\nu(A),
+\]
+with $\nu$ as in Lemma~\ref{lem:fromatom}. Consequently, $K$ is uniformly ergodic with a unique stationary distribution $\pi$; for all $x$,
+\[
+\|K^{n}(x,\cdot)-\pi\|_{\mathrm{TV}} \ \le\ (1-\varepsilon)^{\lfloor n/T\rfloor}.
+\]
+\emph{Proof.} Compose Lemmas~\ref{lem:toatom} and \ref{lem:fromatom}: $K^{t_1}(x,\{o\})\ge \varepsilon_1$ and $K^{t_2}(o,\cdot)\ge \varepsilon_2\,\nu(\cdot)$ imply $K^{T}(x,\cdot)\ge \varepsilon\,\nu(\cdot)$ with $T=t_1+t_2$. This is a global Doeblin condition \cite{Doeblin1937,LevinPeresWilmer2009}, implying uniform (geometric) ergodicity and uniqueness of the stationary distribution. \qed
+\end{theorem}
+
+\begin{remark}[Coupling interpretation and mixing time]
+Construct a synchronous coupling that forces both chains to hit $o$ within $t_1$ with probability $\ge\varepsilon_1$, then regenerate jointly for $t_2$ using the same randomness from $\nu$. Each epoch of length $T$ coalesces with probability $\varepsilon$; hence
+$\tau_{\mathrm{mix}}(\delta)\ \le\ T\,\lceil \log(\delta^{-1})/\log((1-\varepsilon)^{-1})\rceil$ \cite{LevinPeresWilmer2009}.
+\end{remark}
+
+\begin{proposition}[Unlabeled uniqueness]
+Because $K$ is invariant under relabelings, the unique labeled stationary distribution $\pi$ projects to a unique invariant measure on unlabeled causal sets (isomorphism classes).
+\end{proposition}
+
+\paragraph{Summary.} On any fixed finite region $D$, the normalized+saturated BD dynamics yields a finite, aperiodic Markov chain satisfying a global Doeblin condition. The chain is uniformly ergodic with unique $\pi$; all time averages converge almost surely (Birkhoff) and seed-averaged diagnostics are well-defined.
+
+%==========================================================
+\section{Foundational diagnostics and acceptance criteria}
+
+\subsection{Interval abundance spectrum}
+Let $n_k(x)$ be the count of subintervals of size $k$ ending at $x$; define $L_k=\E[\tfrac{1}{|V|}\sum_x n_k(x)]$, $k=1,\dots,4$. In 4D Minkowski Poisson sprinklings the combination
+\[
+S^{(4)}=1-L_1+9L_2-16L_3+8L_4
+\]
+vanishes on flat space \citep{BenincasaDowker2010}. \textbf{Acceptance:} on flat controls, median $|S^{(4)}|$ decreases with refinement; log–log slope $p>0.5$ (95\% CI).
+
+\begin{figure}[H]\centering
+\SafeGraphic{interval_hist.png}{0.80}
+\caption{Interval-size histogram (flat control). \textbf{Falsifier:} persistent bias in $S^{(4)}$ or nonshrinking residuals.}
+\end{figure}
+
+\subsection{Myrheim--Meyer dimension}
+Estimate $d_{\rm MM}$ from order-fraction statistics \citep{Myrheim1978,Meyer1988Dim}.
+\textbf{Acceptance:} median $d_{\rm MM}=4\pm0.1$ at top size; error decreases with $N$.
+
+\begin{figure}[H]\centering
+\SafeGraphic{mm_dimension.png}{0.80}
+\caption{Myrheim--Meyer dimension vs $N$. \textbf{Falsifier:} drift away from $4$ or nonshrinking error bars.}
+\end{figure}
+
+\subsection{Link/degree statistics and Lorentz symmetry}
+Degree distributions and link densities should match Poisson sprinklings in 4D \citep{Bombelli1987}.
+\textbf{Acceptance:} Kolmogorov–Smirnov distance to sprinkling baseline decreases with refinement.
+
+\begin{figure}[H]\centering
+\SafeGraphic{bd_rate_stability.png}{0.80}
+\caption{Rate stability: link density and in/out-degree summaries across the ladder. \textbf{Falsifier:} nonstationary drift or seed-instability not shrinking with $N$.}
+\end{figure}
+
+%==========================================================
+\section{Operators (preview)}
+We record the generalized d'Alembertian $B_{\rm BDG}$ structure for use in Papers II–IV \citep{AslanbeigiEtAl2014}; calibration to flat controls is performed in Paper II.
+
+\section*{Acknowledgments}
+We thank the causal set community; code and data reside in \texttt{FUT\_toe-paper}.
+
+\appendix
+
+\section{Why laziness is harmless}
+Replacing $K$ by $K_\ell=\tfrac12(I+K)$ preserves invariant measures and improves to aperiodicity; the Doeblin constant only improves (or equals) under laziness \cite{LevinPeresWilmer2009,MeynTweedie2009}.
+
+\section{Constants and explicit bounds}
+With $T=(N_{\max}-1)+(N_{\max}-1)$,
+\[
+\varepsilon = \big(\tfrac12\,\underline{p}_{\rm del}\big)^{N_{\max}-1}\,
+             \big(\tfrac12\,\underline{p}_{\rm add}\,\underline{p}_{\rm loc}\,\underline{p}_{\rm link}^{\,c_r}\big)^{N_{\max}-1}.
+\]
+All are strictly positive by (A2)--(A3); hence the geometric rate $(1-\varepsilon)^{\lfloor n/T\rfloor}$ is explicit.
+
+% Ensure references appear
+\nocite{Bombelli1987,Myrheim1978,Meyer1988Dim,BenincasaDowker2010,AslanbeigiEtAl2014,LevinPeresWilmer2009,MeynTweedie2009,Doeblin1937}
+
+% --- References last
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_I}
+
+\end{document}

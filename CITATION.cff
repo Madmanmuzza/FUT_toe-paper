@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "FUT — Papers I–X: A Causal-Set Program (Negentropic Birth–Death)"
+authors:
+  - family-names: Murray
+    given-names: Daniel J.
+version: 0.0.1
+date-released: 2025-09-08

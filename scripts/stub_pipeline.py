@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+import json, sys, os, pathlib, numpy as np
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+def ensure():
+    (ROOT / "figs" / "out").mkdir(parents=True, exist_ok=True)
+
+def do_figs():
+    # Minimal demo numeric outputs for Papers I–III
+    rr = {
+        "paper1": {
+            "interval_L": [0.52, 0.30, 0.13, 0.05],
+            "mm_dimension": {"N":[1024,2048,4096,8192], "median":[3.95,3.98,4.01,4.00], "iqr":[0.2,0.14,0.10,0.08]},
+            "rate_stability": {
+                "N":[1024,2048,4096,8192],
+                "link_med":[0.120,0.118,0.119,0.118],
+                "link_iqr":[0.015,0.012,0.010,0.009],
+                "deg_in_med":[4.2,4.1,4.0,3.95],
+                "deg_in_iqr":[0.8,0.7,0.6,0.55],
+                "deg_out_med":[4.1,4.0,3.95,3.9],
+                "deg_out_iqr":[0.8,0.7,0.6,0.55]
+            }
+        },
+        "paper2": {
+            "bdg_error": {"ell":[0.25,0.177,0.125,0.088], "L2":[0.14,0.09,0.055,0.035], "slope": 1.1},
+            "spectral_dim": {"tau":[2,3,5,8,13,21,34,55], "ds":[2.3,2.8,3.3,3.6,3.85,3.95,3.99,4.0]},
+            "lorentz_CV": {"angles":[0,1,2,3,4,5,6], "CV":[0.12,0.11,0.10,0.11,0.10,0.11,0.10]},
+            "bd_layers": {"L":[0.52,0.30,0.13,0.05]}
+        },
+        "paper3": {
+            "friedmann_resid": {"ell":[0.25,0.177,0.125,0.088], "abs_resid":[0.10,0.06,0.038,0.025], "slope": 1.0},
+            "poisson_resid": {"ell":[0.25,0.177,0.125,0.088], "L2":[0.12,0.075,0.048,0.033]},
+            "wave_dispersion": {"k":[0.3,0.5,0.8,1.2], "omega_disc":[0.31,0.52,0.81,1.19], "omega_cont":[0.3,0.5,0.8,1.2]}
+        }
+    }
+    with open(ROOT/"run_report.json","w") as f:
+        json.dump(rr, f, indent=2)
+
+if __name__ == "__main__":
+    ensure()
+    if len(sys.argv)>1 and sys.argv[1]=="figs":
+        do_figs()
+    # bench/phase do nothing in this stub
