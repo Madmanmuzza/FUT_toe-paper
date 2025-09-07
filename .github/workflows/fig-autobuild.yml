@@ -11,32 +11,22 @@ on:
       - '.github/workflows/fig-autobuild.yml'
 
 permissions:
-  contents: write   # allow the bot to commit to your repo
+  contents: write
 
 env:
-  MPLBACKEND: Agg   # headless matplotlib
+  MPLBACKEND: Agg
 
 jobs:
   build-figs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Show repo tree (debug)
-        run: |
-          echo "::group::TREE"
-          ls -la
-          echo
-          find . -maxdepth 3 -type f | sort
-          echo "::endgroup::"
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install deps (numpy/matplotlib)
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then
@@ -44,45 +34,34 @@ jobs:
           else
             pip install numpy matplotlib
           fi
-          python -c "import numpy, matplotlib; print('OK', numpy.__version__, matplotlib.__version__)"
 
-      - name: Ensure run_report.json exists (fallback minimal content)
+      - name: Ensure run_report.json exists (safe)
+        shell: python
         run: |
-          if [ ! -f run_report.json ]; then
-            python - <<'PY'
-import json
-rr={"paper1":{
-  "interval_L":[0.52,0.30,0.13,0.05],
-  "mm_dimension":{"N":[1024,2048,4096,8192],
-                  "median":[3.95,3.98,4.01,4.00],
-                  "iqr":[0.20,0.14,0.10,0.08]},
-  "rate_stability":{"N":[1024,2048,4096,8192],
-                    "link_med":[0.120,0.118,0.119,0.118],
-                    "link_iqr":[0.015,0.012,0.010,0.009],
-                    "deg_in_med":[4.2,4.1,4.0,3.95],
-                    "deg_in_iqr":[0.8,0.7,0.6,0.55],
-                    "deg_out_med":[4.1,4.0,3.95,3.9],
-                    "deg_out_iqr":[0.8,0.7,0.6,0.55]}}}
-open("run_report.json","w").write(json.dumps(rr,indent=2))
-print("Wrote minimal run_report.json")
-PY
-          fi
-          echo "---- run_report.json ----"
-          cat run_report.json
+          import json, os
+          if not os.path.exists('run_report.json'):
+              rr = {"paper1":{
+                "interval_L":[0.52,0.30,0.13,0.05],
+                "mm_dimension":{"N":[1024,2048,4096,8192],
+                                "median":[3.95,3.98,4.01,4.00],
+                                "iqr":[0.20,0.14,0.10,0.08]},
+                "rate_stability":{"N":[1024,2048,4096,8192],
+                                  "link_med":[0.120,0.118,0.119,0.118],
+                                  "link_iqr":[0.015,0.012,0.010,0.009],
+                                  "deg_in_med":[4.2,4.1,4.0,3.95],
+                                  "deg_in_iqr":[0.8,0.7,0.6,0.55],
+                                  "deg_out_med":[4.1,4.0,3.95,3.9],
+                                  "deg_out_iqr":[0.8,0.7,0.6,0.55]}}}
+              open('run_report.json','w').write(json.dumps(rr, indent=2))
+              print('Wrote run_report.json')
+          else:
+              print('run_report.json already present')
 
       - name: Generate paper figures
         run: |
           python scripts/generate_paper_figs.py
 
-      - name: Show generated files (debug)
-        run: |
-          echo "::group::PAPER1"; ls -l paper1/figs || true; echo "::endgroup::"
-          echo "::group::PAPER2"; ls -l paper2/figs || true; echo "::endgroup::"
-          echo "::group::PAPER3"; ls -l paper3/figs || true; echo "::endgroup::"
-
-      - name: Commit updated figures (skip if branch protected)
-        id: commit
-        continue-on-error: true
+      - name: Commit updated figures
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -90,18 +69,6 @@ PY
           if ! git diff --cached --quiet; then
             git commit -m "CI: regenerate paper figures"
             git push
-            echo "pushed=true" >> $GITHUB_OUTPUT
           else
             echo "No figure updates."
-            echo "pushed=false" >> $GITHUB_OUTPUT
-
-      - name: Upload figures as artifact (if push didn’t happen)
-        if: steps.commit.outputs.pushed != 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-figs
-          path: |
-            paper1/figs/*.png
-            paper2/figs/*.png
-            paper3/figs/*.png
-          if-no-files-found: warn
+          fi
