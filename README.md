@@ -34,3 +34,9 @@ This repository includes a lightweight GitHub Actions workflow that runs a **smo
 - builds the **Myrheim–Meyer calibration** (CI-scale),
 - runs a **tiny phase scan** (CI-scale),
 - and generates the **figures** into `figs/out/`.
+
+## Paper II — Continuum Emergence & Invariance Tests
+- TeX: `paper2/paper_II.tex`
+- Figures: `paper2/figs/`
+- PDF: `paper2/Paper_II_full_draft.pdf` (if present)
+- Notes: BDG error curve is a placeholder until the curved BDG script is run.
