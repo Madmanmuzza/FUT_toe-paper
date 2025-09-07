@@ -11,6 +11,7 @@ This repo contains:
 - `figs/` — scripts to generate figures (saved in `figs/out/`)
 - `config/` — parameter grids and seeds
 - `Makefile` — `make all` builds figures and compiles the paper
+**Paper II (camera-ready PDF):** [paper2/Paper_II_camera_ready.pdf](paper2/Paper_II_camera_ready.pdf)
 
 ## Quick start
 ```bash
