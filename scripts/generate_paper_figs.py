@@ -112,40 +112,51 @@ def paper1(rr):
         savefig(os.path.join(tgt, "bd_rate_stability.png"))
 
 def paper2(rr):
-    tgt = os.path.join(ROOT, "paper2", "figs"); ensure_dir(tgt)
+    import numpy as np
+    import os, matplotlib.pyplot as plt
+
+    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    tgt = os.path.join(ROOT, "paper2", "figs")
+    os.makedirs(tgt, exist_ok=True)
+
     p2 = rr.get("paper2", {})
 
+    # 1) BDG error curve
     e = p2.get("bdg_error")
     if e and all(k in e for k in ("ell","L2")):
         ell = np.array(e["ell"], float); L2 = np.array(e["L2"], float)
         plt.figure(figsize=(6,3.6)); plt.loglog(ell, L2, 'o-')
-        if "slope" in e: plt.text(min(ell)*1.05, max(L2)/1.2, f"slope≈{e['slope']:.2f}")
+        if "slope" in e:
+            plt.text(min(ell)*1.05, max(L2)/1.2, f"slope≈{e['slope']:.2f}")
         plt.xlabel("coarse length ℓ"); plt.ylabel(r"$\|B_{\rm BDG}f - \Box f\|_{L^2}$")
         plt.title("BDG vs continuum error (from run)")
-        savefig(os.path.join(tgt, "bdg_error_curve.png"))
+        os.makedirs(tgt, exist_ok=True); plt.tight_layout()
+        plt.savefig(os.path.join(tgt, "bdg_error_curve.png"), dpi=200); plt.close()
 
+    # 2) Spectral dimension flow
     sd = p2.get("spectral_dim")
     if sd and all(k in sd for k in ("tau","ds")):
-        tau = np.array(sd["tau"], float); ds = np.array(sd["ds"], float)
+        tau = np.array(sd["tau"], float); ds  = np.array(sd["ds"], float)
         plt.figure(figsize=(6,3.6)); plt.semilogx(tau, ds, 'o-'); plt.axhline(4.0, ls='--')
-        plt.xlabel("walk steps τ"); plt.ylabel(r"$d_s(\tau)$")
-        plt.title("Spectral dimension (from run)")
-        savefig(os.path.join(tgt, "spectral_flow.png"))
+        plt.xlabel("walk steps τ"); plt.ylabel(r"$d_s(\tau)$"); plt.title("Spectral dimension (from run)")
+        plt.tight_layout(); plt.savefig(os.path.join(tgt, "spectral_flow.png"), dpi=200); plt.close()
 
+    # 3) Orientation invariance
     lor = p2.get("lorentz_CV")
     if lor and all(k in lor for k in ("angles","CV")):
-        a = np.array(lor["angles"], float); cv = np.array(lor["CV"], float)
+        a  = np.array(lor["angles"], float); cv = np.array(lor["CV"], float)
         plt.figure(figsize=(6,3.6)); plt.plot(a, cv, 'o-')
-        plt.xlabel("orientation index"); plt.ylabel("CV (cross-edges)")
-        plt.title("Orientation invariance (from run)")
-        savefig(os.path.join(tgt, "lorentz_bootstrap.png"))
+        plt.xlabel("orientation index"); plt.ylabel("CV (cross-edges)"); plt.title("Orientation invariance (from run)")
+        plt.tight_layout(); plt.savefig(os.path.join(tgt, "lorentz_bootstrap.png"), dpi=200); plt.close()
 
+    # 4) Exact BD curvature layers
     bd = p2.get("bd_layers")
     if bd and "L" in bd and len(bd["L"]) >= 4:
         L = bd["L"]; k = np.arange(1,5)
         plt.figure(figsize=(6,3.6)); plt.bar(k, L[:4]); plt.xticks(k, [f"{ki}" for ki in k])
         plt.xlabel("Layer k"); plt.ylabel("Average L_k"); plt.title("Exact BD curvature layers (from run)")
-        savefig(os.path.join(tgt, "bd_curvature_exact.png"))
+        plt.tight_layout(); plt.savefig(os.path.join(tgt, "bd_curvature_exact.png"), dpi=200); plt.close()
+
 
 def paper3(rr):
     tgt = os.path.join(ROOT, "paper3", "figs"); ensure_dir(tgt)
