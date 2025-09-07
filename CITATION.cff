@@ -1,9 +1,0 @@
-cff-version: 1.2.0
-message: If you use this code or paper, please cite it as below.
-title: "Negentropic Birth–Death Growth on Causal Sets: Model, Well-posedness, and Diagnostics"
-authors:
-  - family-names: Murray
-    given-names: Daniel J.
-date-released: 2025-09-07
-version: 0.1.0
-license: MIT
