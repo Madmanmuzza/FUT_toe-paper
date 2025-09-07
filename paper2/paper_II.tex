@@ -2,7 +2,7 @@
 %  Paper II (standalone)  %
 %=========================%
 
-% -- Write a minimal .bib file automatically (so the project is self-contained)
+% -- Self-contained bibliography (writes paper_II.bib on compile)
 \begin{filecontents*}{paper_II.bib}
 @article{BenincasaDowker2010,
   author  = {Benincasa, Dionigi M. T. and Dowker, Fay},
@@ -50,6 +50,8 @@
 \usepackage{microtype}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{xcolor}
+\usepackage{float}                % For [H] hard placement
+\usepackage[section]{placeins}    % Auto-float barriers at each \section
 
 % --- hyperlink setup
 \hypersetup{
@@ -58,12 +60,6 @@
   citecolor=blue!50!black,
   urlcolor=blue!50!black
 }
-
-% --- figure search path (so \includegraphics{foo} looks in figs/)
-\makeatletter
-\def\input@path{{figs/}}
-\makeatother
-\graphicspath{{figs/}}
 
 % --- theorem environments
 \theoremstyle{plain}
@@ -80,6 +76,20 @@
 \newcommand{\Var}{\mathrm{Var}}
 \newcommand{\Boxop}{\Box}
 \newcommand{\MM}{d_{\mathrm{MM}}}
+
+% --- figure path search: look in ./figs/ and paper2/figs/
+\graphicspath{{figs/}{paper2/figs/}}
+
+% --- robust single-check include to avoid nested \IfFileExists
+\makeatletter
+\newcommand{\SafeGraphic}[2]{% #1 = filename (with extension), #2 = width fraction (e.g., 0.85)
+  \IfFileExists{#1}{%
+    \includegraphics[width=#2\linewidth]{#1}%
+  }{%
+    \fbox{\parbox[c][2.2in][c]{#2\linewidth}{\centering\small \textsf{Figure file not found:}\\\texttt{#1}}}%
+  }%
+}
+\makeatother
 
 \title{Paper II: Continuum Emergence and Invariance Tests\\
 for Negentropic Birth--Death on Causal Sets}
@@ -166,64 +176,59 @@ With Eq.~\eqref{eq:bd4}, the per-element average varies monotonically with $\eps
 \section{Results (demo scale)}
 Larger $N$ and multiple seeds will be included in the camera-ready Paper~II.
 
-\begin{figure}[t]
+\paragraph{Run config.}
+Unless stated otherwise, we used $\epsilon\in\{0.0, 0.2\}$, $N\in\{120,160,220\}$, and seeds $\{0,1,2\}$.
+
+\begin{figure}[H]
   \centering
-  % If the file exists, include; otherwise, show a placeholder frame
-  \IfFileExists{lorentz_bootstrap.png}{%
-    \includegraphics[width=0.85\linewidth]{lorentz_bootstrap.png}%
-  }{%
-    \fbox{\rule{0pt}{2.2in}\rule{0.85\linewidth}{0pt} \ \textsf{lorentz\_bootstrap.png missing in figs/}}%
-  }
+  \SafeGraphic{lorentz_bootstrap.png}{0.85}
   \caption{Orientation invariance: CV by seed with 95\% bootstrap CI; permutation $p$-value compares flat vs weakly curved groups.}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[H]
   \centering
-  \IfFileExists{bdg_error_curve.png}{%
-    \includegraphics[width=0.85\linewidth]{bdg_error_curve.png}%
-  }{%
-    \fbox{\rule{0pt}{2.2in}\rule{0.85\linewidth}{0pt} \ \textsf{bdg\_error\_curve.png missing in figs/}}%
-  }
-  \caption{BDG $L^2$ error vs coarse length $\ell$ on flat and weakly curved controls.
-  \emph{If missing:} run \texttt{src/paper2\_experiments/bdg\_curved\_extended.py} and \texttt{figs2/make\_bdg\_error\_curve.py}, then copy \texttt{figs2/out/bdg\_error\_curve.png} to \texttt{figs/}.}
+  \SafeGraphic{bdg_error_curve.png}{0.85}
+  \caption{BDG $L^2$ error vs coarse length $\ell$ on flat and weakly curved controls.}
 \end{figure}
 
-\begin{figure}[t]
+% Commands to regenerate Fig. 2 (kept OUTSIDE the caption to avoid escaping issues)
+\FloatBarrier
+\vspace{-0.5em}
+{\footnotesize\noindent\textbf{To regenerate:}}
+\begin{minipage}{0.96\linewidth}
+\begin{verbatim}
+python src/paper2_experiments/bdg_curved_extended.py
+python figs2/make_bdg_error_curve.py
+cp figs2/out/bdg_error_curve.png paper2/figs/bdg_error_curve.png
+\end{verbatim}
+\end{minipage}
+
+% --- Force Figures 3 & 4 to stay BEFORE appendices & references
+\FloatBarrier
+\clearpage
+
+\begin{figure}[H]
   \centering
-  \IfFileExists{bd_curvature_exact.png}{%
-    \includegraphics[width=0.75\linewidth]{bd_curvature_exact.png}%
-  }{%
-    \fbox{\rule{0pt}{2.2in}\rule{0.75\linewidth}{0pt} \ \textsf{bd\_curvature\_exact.png missing in figs/}}%
-  }
+  \SafeGraphic{bd_curvature_exact.png}{0.75}
   \caption{Exact BD curvature (4D layer coefficients) vs curvature parameter $\epsilon$.}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[H]
   \centering
-  \IfFileExists{spectral_flow.png}{%
-    \includegraphics[width=0.75\linewidth]{spectral_flow.png}%
-  }{%
-    \fbox{\rule{0pt}{2.2in}\rule{0.75\linewidth}{0pt} \ \textsf{spectral\_flow.png missing in figs/}}%
-  }
+  \SafeGraphic{spectral_flow.png}{0.75}
   \caption{Spectral-dimension flow $d_s(\ell)$ estimated from lazy random-walk return probabilities (if available).}
 \end{figure}
 
-\section{Discussion and next steps}
-To complete Paper~II for submission we will: (i) scale $N$ and seeds; (ii) formalize concentration for Myrheim--Meyer dimension with bounds;
-(iii) give a consistency theorem for $B_\ell\!\to\!\Boxop$ on Minkowski with an empirical rate and a conformal-bias calculation; (iv) include full derivations in appendices.
-
-\paragraph{Implication for a ToE program.}
-Paper~II establishes the geometric substrate. Paper~III targets an effective action and Einstein-like equations; Paper~IV addresses the quantum law on histories and recovery of QFT; Paper~V introduces gauge/matter (holonomies, discrete Dirac, anomalies).
+% --- Flush any remaining floats before appendices
+\FloatBarrier
+\clearpage
 
 \section*{Acknowledgments}
 We thank the causal set community; all code and data are public in the \texttt{FUT\_toe-paper} repository.
 
-\bibliographystyle{unsrtnat}
-\bibliography{paper_II}
-
 \appendix
 
-\section{Conformal bias model for $\Boxop_g$}
+\section{Conformal bias model for \texorpdfstring{$\Boxop_g$}{Box\_g}}
 For $g=\Omega^2\eta$ with slowly varying $\Omega(\xi)=1+\epsilon\,\xi^2$, one expects
 \[
 \Boxop_g f=\Omega^{-2}\!\left(\Boxop f +(d-2)\,\Omega^{-1}\eta^{\mu\nu}\partial_\mu\Omega\,\partial_\nu f\right)+O(\partial^2\Omega).
@@ -236,5 +241,11 @@ $L_k(x)=|\{y\prec x:\,|I(y,x)|=k-1\}|$ for $k=1,\dots,4$ and average the density
 
 \section{Lorentz-invariance statistic and bootstrap}
 We sample random half-space partitions via $s(u)=a\,\deg^{-}(u)+b\,\deg^{+}(u)$, compute cross-edge counts, report CV, and construct 95\% bootstrap CIs; a permutation test compares flat vs weakly curved groups.
+
+% --- Ensure refs come AFTER appendices
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{paper_II}
 
 \end{document}
