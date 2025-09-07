@@ -1,0 +1,48 @@
+name: Build & publish paper figures
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/**'
+      - 'requirements.txt'
+      - 'run_report.json'
+      - '.github/workflows/fig-autobuild.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-figs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Generate paper figures from run_report.json
+        run: |
+          source .venv/bin/activate
+          python scripts/generate_paper_figs.py
+
+      - name: Commit updated figures
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Try to add all paper figures; ignore if some papers don't have outputs yet
+          git add paper*/figs/*.png || true
+          if ! git diff --cached --quiet; then
+            git commit -m "CI: regenerate paper figures from run_report.json"
+            git push
+          else
+            echo "No figure updates."
+          fi
